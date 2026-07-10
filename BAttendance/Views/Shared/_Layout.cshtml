@@ -1,0 +1,432 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BAttendance</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/BAttendance.styles.css" asp-append-version="true" />
+
+    <style>
+        :root {
+            --sidebar-bg: #1B2430;
+            --sidebar-bg-hover: #262f3d;
+            --brand: #2B3A67;
+            --accent: #2EC4B6;
+            --page-bg: #F5F7FA;
+            --text-main: #1F2937;
+            --text-muted: #8B93A1;
+            --sidebar-width: 250px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--page-bg);
+            color: var(--text-main);
+        }
+
+        /* ---------- Sidebar ---------- */
+        .app-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            display: flex;
+            flex-direction: column;
+            z-index: 1040;
+            transition: width 0.18s ease, transform 0.18s ease;
+            overflow-x: hidden;
+        }
+
+            .app-sidebar .brand {
+                display: flex;
+                align-items: center;
+                gap: 0.6rem;
+                padding: 1.25rem 1.25rem 1rem;
+                color: #fff;
+                font-weight: 700;
+                font-size: 1.1rem;
+                text-decoration: none;
+                white-space: nowrap;
+            }
+
+                .app-sidebar .brand .brand-dot {
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 50%;
+                    background: var(--accent);
+                    box-shadow: 0 0 0 3px rgba(46, 196, 182, 0.25);
+                    flex-shrink: 0;
+                }
+
+            .app-sidebar .nav-section-label {
+                color: var(--text-muted);
+                font-size: 0.7rem;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                padding: 1rem 1.25rem 0.4rem;
+                white-space: nowrap;
+            }
+
+            .app-sidebar .nav-link,
+            .app-sidebar .nav-group-toggle {
+                color: #C7CDD6;
+                font-size: 0.92rem;
+                font-weight: 500;
+                padding: 0.6rem 1.25rem;
+                display: flex;
+                align-items: center;
+                gap: 0.7rem;
+                border-left: 3px solid transparent;
+                width: 100%;
+                background: none;
+                border-top: none;
+                border-right: none;
+                border-bottom: none;
+                text-align: left;
+                white-space: nowrap;
+            }
+
+                .app-sidebar .nav-link i,
+                .app-sidebar .nav-group-toggle i.icon-lead {
+                    font-size: 1rem;
+                    width: 18px;
+                    flex-shrink: 0;
+                }
+
+                .app-sidebar .nav-link:hover,
+                .app-sidebar .nav-group-toggle:hover {
+                    background: var(--sidebar-bg-hover);
+                    color: #fff;
+                }
+
+                .app-sidebar .nav-link.active {
+                    background: var(--sidebar-bg-hover);
+                    color: #fff;
+                    border-left-color: var(--accent);
+                }
+
+        .nav-group-toggle .chevron {
+            margin-left: auto;
+            font-size: 0.75rem;
+            transition: transform 0.15s ease;
+        }
+
+        .nav-group-toggle[aria-expanded="true"] .chevron {
+            transform: rotate(90deg);
+        }
+
+        .nav-group-toggle[aria-expanded="true"] {
+            color: #fff;
+        }
+
+        .nav-submenu {
+            display: flex;
+            flex-direction: column;
+        }
+
+            .nav-submenu .nav-link {
+                padding-left: 3rem;
+                font-size: 0.87rem;
+                font-weight: 400;
+            }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 1rem 1.25rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+
+        /* ---------- Hidden (fully collapsed) state ---------- */
+        .app-sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .app-main.sidebar-collapsed {
+            margin-left: 0;
+        }
+
+        /* ---------- Main area ---------- */
+        .app-main {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: margin-left 0.18s ease;
+        }
+
+        .app-topbar {
+            background: #fff;
+            border-bottom: 1px solid #E5E9EF;
+            padding: 0.85rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+            .app-topbar .page-title {
+                font-weight: 600;
+                font-size: 1.05rem;
+                margin: 0;
+            }
+
+        .icon-btn {
+            border: none;
+            background: none;
+            font-size: 1.3rem;
+            color: var(--text-main);
+            width: 34px;
+            height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+        }
+
+            .icon-btn:hover {
+                background: #EEF1F5;
+            }
+
+        .user-menu-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            border: 1px solid #E5E9EF;
+            background: #fff;
+            border-radius: 8px;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.85rem;
+        }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--brand);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .app-content {
+            padding: 1.75rem;
+            flex: 1;
+        }
+
+        .app-footer {
+            padding: 1rem 1.75rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+
+
+        .app-sidebar.show {
+            transform: translateX(0);
+            box-shadow: 4px 0 24px rgba(0,0,0,0.25);
+        }
+
+        }
+
+        /* ---------- Overlay backdrop when sidebar is open on mobile ---------- */
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.35);
+            z-index: 1030;
+        }
+
+            .sidebar-backdrop.show {
+                display: block;
+            }
+
+    
+        </style>
+</head>
+<body>
+
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <aside class="app-sidebar" id="appSidebar">
+        <a class="brand" asp-area="" asp-controller="Home" asp-action="Index">
+            <span class="brand-dot"></span>
+            <span>BAttendance</span>
+        </a>
+
+        <nav class="nav flex-column">
+            <div class="nav-section-label">Overview</div>
+            <a class="nav-link" asp-controller="Home" asp-action="Index">
+                <i class="bi bi-grid-1x2"></i> <span>Dashboard</span>
+            </a>
+
+            <div class="nav-section-label">Manage</div>
+
+            <!-- Branch group -->
+            <button class="nav-group-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#menuBranch" aria-expanded="false">
+                <i class="bi bi-building icon-lead"></i> <span>Branch</span> <i class="bi bi-chevron-right chevron"></i>
+            </button>
+            <div class="collapse nav-submenu" id="menuBranch">
+                <a class="nav-link" asp-controller="Branch" asp-action="Create"><span>Add Branch</span></a>
+                <a class="nav-link" asp-controller="Branches" asp-action="Index"><span>Branch List</span></a>
+            </div>
+
+            <!-- Staff group -->
+            <button class="nav-group-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#menuStaff" aria-expanded="false">
+                <i class="bi bi-people icon-lead"></i> <span>Staff</span> <i class="bi bi-chevron-right chevron"></i>
+            </button>
+            <div class="collapse nav-submenu" id="menuStaff">
+                <a class="nav-link" asp-controller="Staff" asp-action="Create"><span>Add Staff</span></a>
+                <a class="nav-link" asp-controller="Staff" asp-action="Index"><span>Staff List</span></a>
+            </div>
+
+            <!-- User group -->
+            <button class="nav-group-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#menuUser" aria-expanded="false">
+                <i class="bi bi-person-badge icon-lead"></i> <span>User</span> <i class="bi bi-chevron-right chevron"></i>
+            </button>
+            <div class="collapse nav-submenu" id="menuUser">
+                <a class="nav-link" asp-controller="Users" asp-action="Create"><span>Add User</span></a>
+                <a class="nav-link" asp-controller="Users" asp-action="Index"><span>User List</span></a>
+            </div>
+
+            <!-- Attendance group -->
+            <button class="nav-group-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#menuAttendance" aria-expanded="false">
+                <i class="bi bi-calendar-check icon-lead"></i> <span>Attendance</span> <i class="bi bi-chevron-right chevron"></i>
+            </button>
+            <div class="collapse nav-submenu" id="menuAttendance">
+                <a class="nav-link" asp-controller="Attendance" asp-action="Index"><span>Attendance Log</span></a>
+                <a class="nav-link" asp-controller="Attendance" asp-action="DailyReport"><span>Daily Report</span></a>
+                <a class="nav-link" asp-controller="Attendance" asp-action="MonthlyReport"><span>Monthly Report</span></a>
+                <a class="nav-link" asp-controller="Attendance" asp-action="BranchSummary"><span>Branch Summary</span></a>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            &copy; 2026 BAttendance
+        </div>
+    </aside>
+
+    <div class="app-main" id="appMain">
+        <header class="app-topbar">
+            <div class="d-flex align-items-center gap-2">
+                <button class="icon-btn" id="sidebarToggle" type="button" aria-label="Toggle sidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h1 class="page-title">@ViewData["Title"]</h1>
+            </div>
+
+            <div class="dropdown">
+                <button class="user-menu-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="user-avatar">@(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "U")</span>
+                    <span>@(User.Identity?.Name ?? "Account")</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><span class="dropdown-item-text text-muted small">Signed in as @(User.IsInRole("SuperAdmin") ? "Super Admin" : "Branch Manager")</span></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile"><i class="bi bi-person me-2"></i>Profile</a></li>
+                    <li>
+                        <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                            <button type="submit" class="dropdown-item text-danger">
+                                <i class="bi bi-box-arrow-right me-2"></i>Logout
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </header>
+
+        <main class="app-content" role="main">
+            @RenderBody()
+        </main>
+
+        <footer class="app-footer">
+            BAttendance &middot; <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </footer>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        (function () {
+            var sidebar = document.getElementById('appSidebar');
+            var main = document.getElementById('appMain');
+            var backdrop = document.getElementById('sidebarBackdrop');
+            var toggle = document.getElementById('sidebarToggle');
+            var isMobile = function () { return window.matchMedia('(max-width: 900px)').matches; };
+
+            function openSidebar() {
+                if (isMobile()) {
+                    sidebar.classList.add('show');
+                    backdrop.classList.add('show');
+                } else {
+                    sidebar.classList.remove('collapsed');
+                    main.classList.remove('sidebar-collapsed');
+                    localStorage.setItem('sidebarCollapsed', 'false');
+                }
+            }
+
+            function closeSidebar() {
+                if (isMobile()) {
+                    sidebar.classList.remove('show');
+                    backdrop.classList.remove('show');
+                } else {
+                    sidebar.classList.add('collapsed');
+                    main.classList.add('sidebar-collapsed');
+                    localStorage.setItem('sidebarCollapsed', 'true');
+                }
+            }
+
+            // Restore desktop state on load (mobile always starts closed)
+            if (!isMobile() && localStorage.getItem('sidebarCollapsed') === 'true') {
+                sidebar.classList.add('collapsed');
+                main.classList.add('sidebar-collapsed');
+            }
+
+            if (toggle) {
+                toggle.addEventListener('click', function () {
+                    var isOpen = isMobile() ? sidebar.classList.contains('show') : !sidebar.classList.contains('collapsed');
+                    if (isOpen) { closeSidebar(); } else { openSidebar(); }
+                });
+            }
+
+            if (backdrop) {
+                backdrop.addEventListener('click', closeSidebar);
+            }
+
+            // Auto-expand the submenu that contains the current page, and mark it active
+            var currentPath = window.location.pathname.toLowerCase();
+            document.querySelectorAll('.nav-submenu .nav-link, .app-sidebar > nav > .nav-link').forEach(function (link) {
+                var href = (link.getAttribute('href') || '').toLowerCase();
+                if (href && currentPath.indexOf(href) === 0) {
+                    link.classList.add('active');
+                    var parentSubmenu = link.closest('.nav-submenu');
+                    if (parentSubmenu) {
+                        parentSubmenu.classList.add('show');
+                        var toggleBtn = document.querySelector('[data-bs-target="#' + parentSubmenu.id + '"]');
+                        if (toggleBtn) { toggleBtn.setAttribute('aria-expanded', 'true'); }
+                    }
+                }
+            });
+        })();
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

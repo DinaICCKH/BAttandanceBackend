@@ -1,0 +1,376 @@
+﻿@model BAttendance.Models.BranchViewModel
+
+@{
+    ViewData["Title"] = "Add Branch";
+}
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+    .page-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+    }
+
+        .page-head h4 {
+            font-weight: 700;
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .page-head .subtitle {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            margin-top: 0.15rem;
+        }
+
+    .back-link {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        margin-bottom: 0.5rem;
+    }
+
+        .back-link:hover {
+            color: var(--brand);
+        }
+
+    /* ---------- Layout: full-width two column ---------- */
+    .branch-form-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+        gap: 1.5rem;
+        align-items: start;
+    }
+
+    @@media (max-width: 991px) {
+        .branch-form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .panel-card {
+        background: #fff;
+        border: 1px solid #E9EBF0;
+        border-radius: 12px;
+        box-shadow: 0 1px 2px rgba(16, 24, 40, 0.03);
+    }
+
+        .panel-card .panel-body {
+            padding: 1.75rem;
+        }
+
+    .panel-section-title {
+        font-weight: 600;
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+        .panel-section-title i {
+            color: var(--brand);
+            font-size: 0.95rem;
+        }
+
+    .form-panel label {
+        font-weight: 500;
+        font-size: 0.86rem;
+        margin-bottom: 0.35rem;
+        color: var(--text-main);
+    }
+
+    .form-control, .form-select {
+        border-color: #DDE2E9;
+        font-size: 0.9rem;
+        padding: 0.6rem 0.8rem;
+        border-radius: 8px;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 0.2rem rgba(46, 196, 182, 0.15);
+        }
+
+    .field-help {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        margin-top: 0.3rem;
+    }
+
+    .section-divider {
+        border-top: 1px solid #F0F2F5;
+        margin: 1.6rem 0;
+    }
+
+    .locate-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.83rem;
+        font-weight: 500;
+        border: 1px solid #DDE2E9;
+        background: #fff;
+        border-radius: 8px;
+        padding: 0.5rem 0.9rem;
+        color: var(--brand);
+        white-space: nowrap;
+    }
+
+        .locate-btn:hover {
+            background: #F5F7FA;
+            border-color: var(--brand);
+        }
+
+        .locate-btn:disabled {
+            opacity: 0.6;
+        }
+
+    /* ---------- Map / radius preview (sticky on the right) ---------- */
+    .map-sticky {
+        position: sticky;
+        top: 1.25rem;
+    }
+
+    #mapPreview {
+        width: 100%;
+        height: 340px;
+        border: none;
+        display: block;
+    }
+
+    .map-frame-wrap {
+        position: relative;
+        border-radius: 12px 12px 0 0;
+        overflow: hidden;
+    }
+
+    .radius-badge {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: rgba(27, 36, 48, 0.85);
+        color: #fff;
+        font-size: 0.78rem;
+        font-weight: 600;
+        padding: 0.35rem 0.7rem;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        backdrop-filter: blur(2px);
+    }
+
+        .radius-badge .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+
+    .map-empty-state {
+        height: 340px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        background: #F7F8FA;
+        text-align: center;
+        padding: 1.5rem;
+    }
+
+        .map-empty-state i {
+            font-size: 1.8rem;
+            margin-bottom: 0.6rem;
+            color: #C7CDD6;
+        }
+
+    .coords-readout {
+        padding: 0.9rem 1.1rem;
+        border-top: 1px solid #F0F2F5;
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.82rem;
+    }
+
+        .coords-readout .label {
+            color: var(--text-muted);
+        }
+
+        .coords-readout .value {
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+
+    .form-actions {
+        display: flex;
+        gap: 0.6rem;
+        padding-top: 0.25rem;
+    }
+
+    .btn-brand {
+        background: var(--brand);
+        border-color: var(--brand);
+        color: #fff;
+        font-weight: 500;
+        padding: 0.55rem 1.4rem;
+        border-radius: 8px;
+    }
+
+        .btn-brand:hover {
+            background: #24305a;
+            border-color: #24305a;
+            color: #fff;
+        }
+
+    .btn-ghost {
+        border: 1px solid #DDE2E9;
+        color: var(--text-main);
+        background: #fff;
+        border-radius: 8px;
+        padding: 0.55rem 1.2rem;
+    }
+
+        .btn-ghost:hover {
+            background: #F5F7FA;
+        }
+</style>
+<style>
+
+    #mapPreview {
+        width: 100%;
+        height: 340px;
+        background: #f0f0f0;
+    }
+</style>
+
+<a asp-action="Index" class="back-link">
+    <i class="bi bi-arrow-left"></i> Branches
+</a>
+
+<div class="page-head">
+    <div>
+        <h4>Add Branch</h4>
+        <div class="subtitle">Register a new location where staff can check in and out</div>
+    </div>
+</div>
+
+<form asp-action="Create" method="post" novalidate>
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" id="validationSummary" style="display:none;"></div>
+
+    <div class="branch-form-grid">
+        <div class="panel-card">
+            <div class="panel-body">
+                <div class="panel-section-title"><i class="bi bi-building"></i> Branch Details</div>
+                <div class="mb-3">
+                    <label asp-for="BranchName"></label>
+                    <input asp-for="BranchName" class="form-control" />
+                </div>
+                <div class="mb-0">
+                    <label asp-for="Address"></label>
+                    <input asp-for="Address" class="form-control" />
+                </div>
+
+                <div class="section-divider"></div>
+
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <div class="panel-section-title mb-0"><i class="bi bi-geo-alt"></i> Location</div>
+                    <button type="button" class="locate-btn" id="btnUseLocation">
+                        <i class="bi bi-crosshair"></i> Use My Current Location
+                    </button>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="Latitude"></label>
+                        <input asp-for="Latitude" class="form-control" id="latitudeInput" />
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Longitude"></label>
+                        <input asp-for="Longitude" class="form-control" id="longitudeInput" />
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <div class="panel-section-title"><i class="bi bi-shield-check"></i> Check-in Rules</div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="AllowedRadiusMeters"></label>
+                        <input asp-for="AllowedRadiusMeters" type="number" class="form-control" id="radiusInput" />
+                    </div>
+                </div>
+                <div class="form-actions mt-4">
+                    <button type="submit" class="btn btn-brand">Save Branch</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="map-sticky">
+            <div class="panel-card overflow-hidden">
+                <div id="mapPreview"></div>
+                <div class="coords-readout">
+                    <span class="label">Latitude</span>
+                    <span class="value" id="readoutLat">—</span>
+                </div>
+                <div class="coords-readout">
+                    <span class="label">Longitude</span>
+                    <span class="value" id="readoutLng">—</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            var latInput = document.getElementById('latitudeInput'),
+                lngInput = document.getElementById('longitudeInput'),
+                readoutLat = document.getElementById('readoutLat'),
+                readoutLng = document.getElementById('readoutLng'),
+                btnLocate = document.getElementById('btnUseLocation');
+
+            // 1. Initialize Map centered on Phnom Penh
+            var map = L.map('mapPreview').setView([11.5564, 104.9282], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+
+            var marker = L.marker([11.5564, 104.9282], { draggable: true }).addTo(map);
+
+            // 2. Update function
+            function updateFields(lat, lng) {
+                latInput.value = lat.toFixed(6);
+                lngInput.value = lng.toFixed(6);
+                readoutLat.textContent = lat.toFixed(6);
+                readoutLng.textContent = lng.toFixed(6);
+                marker.setLatLng([lat, lng]);
+                map.setView([lat, lng], 16);
+            }
+
+            // 3. Listeners
+            marker.on('dragend', (e) => { var p = e.target.getLatLng(); updateFields(p.lat, p.lng); });
+            map.on('click', (e) => { updateFields(e.latlng.lat, e.latlng.lng); });
+
+            btnLocate.addEventListener('click', () => {
+                navigator.geolocation.getCurrentPosition((pos) => {
+                    updateFields(pos.coords.latitude, pos.coords.longitude);
+                }, () => alert("Location access denied."));
+            });
+        })();
+    </script>
+}
