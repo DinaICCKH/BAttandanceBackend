@@ -1,44 +1,61 @@
 ﻿@{
     ViewData["Title"] = "Dashboard";
 
-    // TODO: replace with real values from your controller's model, e.g.
-    // @model DashboardViewModel
     var totalStaff = 42;
     var checkedInToday = 31;
     var totalBranches = 4;
     var lateToday = 5;
+    var attendanceRate = 74;
+
+    // Get selected date filter from query string (defaults to today)
+    var selectedDate = Context.Request.Query["date"].ToString();
+    if (string.IsNullOrEmpty(selectedDate))
+    {
+        selectedDate = DateTime.Now.ToString("yyyy-MM-dd");
+    }
 }
 
 <style>
+    /* --- Dashboard Specific Styles --- */
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
     .kpi-card {
         background: #fff;
-        border: 1px solid #E5E9EF;
-        border-radius: 10px;
+        border: 1px solid #E9EBF0;
+        border-radius: 12px;
         padding: 1.25rem 1.4rem;
         display: flex;
         align-items: center;
         gap: 1rem;
         height: 100%;
+        box-shadow: 0 1px 2px rgba(16, 24, 40, 0.03);
     }
 
     .kpi-icon {
-        width: 44px;
-        height: 44px;
+        width: 48px;
+        height: 48px;
         border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.2rem;
+        font-size: 1.3rem;
         flex-shrink: 0;
     }
 
         .kpi-icon.brand {
-            background: rgba(43, 58, 103, 0.1);
-            color: var(--brand);
+            background: rgba(27, 36, 48, 0.08);
+            color: var(--brand, #1B2430);
         }
 
         .kpi-icon.accent {
-            background: rgba(46, 196, 182, 0.14);
+            background: rgba(46, 196, 182, 0.12);
             color: #17998d;
         }
 
@@ -48,33 +65,59 @@
         }
 
         .kpi-icon.neutral {
-            background: rgba(139, 147, 161, 0.14);
-            color: var(--text-muted);
+            background: rgba(139, 147, 161, 0.12);
+            color: var(--text-muted, #6c757d);
         }
 
     .kpi-value {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
         font-weight: 700;
         line-height: 1.1;
+        color: var(--text-main, #1B2430);
     }
 
     .kpi-label {
-        color: var(--text-muted);
+        color: var(--text-muted, #6c757d);
         font-size: 0.82rem;
+        font-weight: 500;
+        margin-top: 0.1rem;
     }
 
     .panel {
         background: #fff;
-        border: 1px solid #E5E9EF;
-        border-radius: 10px;
-        padding: 1.4rem;
+        border: 1px solid #E9EBF0;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 1px 2px rgba(16, 24, 40, 0.03);
+        height: 100%;
     }
 
     .panel-title {
         font-weight: 600;
         font-size: 0.95rem;
-        margin-bottom: 1rem;
+        color: var(--text-main, #1B2430);
+        margin-bottom: 0;
     }
+
+    /* GridStack styling customization */
+    .grid-stack-item-content {
+        background: transparent !important;
+        border: none !important;
+        overflow: hidden !important;
+    }
+
+    /* Visual handle hint when editing */
+    .dashboard-editable .panel,
+    .dashboard-editable .kpi-card {
+        border: 2px dashed var(--accent, #2ec4b6);
+        cursor: grab;
+        background: #fafcfc;
+    }
+
+        .dashboard-editable .panel:active,
+        .dashboard-editable .kpi-card:active {
+            cursor: grabbing;
+        }
 
     .status-dot {
         width: 8px;
@@ -85,11 +128,11 @@
     }
 
         .status-dot.in {
-            background: var(--accent);
+            background: var(--accent, #2ec4b6);
         }
 
         .status-dot.out {
-            background: var(--text-muted);
+            background: var(--text-muted, #6c757d);
         }
 
         .status-dot.late {
@@ -100,161 +143,272 @@
         font-size: 0.75rem;
         text-transform: uppercase;
         letter-spacing: 0.04em;
-        color: var(--text-muted);
-        border-bottom: 1px solid #E5E9EF;
+        color: var(--text-muted, #6c757d);
+        border-bottom: 1px solid #E9EBF0;
         font-weight: 600;
         padding-bottom: 0.6rem;
     }
 
     .table-clean td {
-        padding: 0.65rem 0.5rem;
+        padding: 0.75rem 0.5rem;
         vertical-align: middle;
         border-bottom: 1px solid #F0F2F5;
         font-size: 0.88rem;
     }
 
     .avatar-sm {
-        width: 30px;
-        height: 30px;
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
-        background: var(--brand);
+        background: var(--brand, #1B2430);
         color: #fff;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.72rem;
+        font-size: 0.75rem;
         font-weight: 600;
         margin-right: 0.6rem;
     }
 
-    .branch-row {
+    .quick-action-btn {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        padding: 0.65rem 0;
-        border-bottom: 1px solid #F0F2F5;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        background: #F8F9FA;
+        border: 1px solid #E9EBF0;
+        border-radius: 8px;
+        color: var(--text-main, #1B2430);
+        text-decoration: none;
+        font-size: 0.88rem;
+        font-weight: 500;
     }
 
-        .branch-row:last-child {
-            border-bottom: none;
+        .quick-action-btn:hover {
+            background: #fff;
+            border-color: var(--accent, #2ec4b6);
+            color: var(--brand, #1B2430);
         }
 </style>
 
-<!-- KPI cards -->
-<div class="row g-3 mb-4">
-    <div class="col-6 col-lg-3">
-        <div class="kpi-card">
-            <div class="kpi-icon brand"><i class="bi bi-people"></i></div>
-            <div>
-                <div class="kpi-value">@totalStaff</div>
-                <div class="kpi-label">Total Staff</div>
-            </div>
-        </div>
+<!-- Dashboard Header & Controls -->
+<div class="dashboard-header">
+    <div>
+        <h4 class="fw-bold m-0">Dashboard Overview</h4>
+        <p class="text-muted small m-0 mt-1">Real-time workforce attendance & compliance tracking</p>
     </div>
-    <div class="col-6 col-lg-3">
-        <div class="kpi-card">
-            <div class="kpi-icon accent"><i class="bi bi-check-circle"></i></div>
-            <div>
-                <div class="kpi-value">@checkedInToday</div>
-                <div class="kpi-label">Checked In Today</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-6 col-lg-3">
-        <div class="kpi-card">
-            <div class="kpi-icon warn"><i class="bi bi-exclamation-circle"></i></div>
-            <div>
-                <div class="kpi-value">@lateToday</div>
-                <div class="kpi-label">Late Today</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-6 col-lg-3">
-        <div class="kpi-card">
-            <div class="kpi-icon neutral"><i class="bi bi-building"></i></div>
-            <div>
-                <div class="kpi-value">@totalBranches</div>
-                <div class="kpi-label">Branches</div>
-            </div>
-        </div>
+
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+        <!-- Date Filter Form -->
+        <form method="get" class="d-flex align-items-center gap-2 bg-white border px-3 py-1.5 rounded-3 shadow-sm">
+            <label for="dateFilter" class="small text-muted fw-semibold mb-0"><i class="bi bi-calendar3"></i></label>
+            <input type="date" id="dateFilter" name="date" value="@selectedDate" class="form-control form-control-sm border-0 bg-transparent p-0 shadow-none fw-semibold" onchange="this.form.submit()" />
+        </form>
+
+        <!-- Reset Layout Button (Hidden until editing) -->
+        <button id="resetLayoutBtn" class="btn btn-outline-danger btn-sm px-3 d-none">
+            <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Layout
+        </button>
+
+        <!-- Toggle Edit Layout Button -->
+        <button id="toggleEditBtn" class="btn btn-outline-secondary btn-sm px-3">
+            <i class="bi bi-grid-1x2 me-1"></i> <span id="editBtnText">Customize Layout</span>
+        </button>
     </div>
 </div>
 
-<div class="row g-3">
-    <!-- Recent attendance -->
-    <div class="col-lg-8">
-        <div class="panel">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <div class="panel-title mb-0">Recent Attendance</div>
-                <a asp-controller="Attendance" asp-action="Index" class="small text-decoration-none">View all</a>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-clean mb-0">
-                    <thead>
-                        <tr>
-                            <th>Staff</th>
-                            <th>Branch</th>
-                            <th>Type</th>
-                            <th>Time</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="avatar-sm">SK</span>Sok Kim</td>
-                            <td>Phnom Penh HQ</td>
-                            <td><span class="status-dot in"></span>Check In</td>
-                            <td>08:02 AM</td>
-                            <td><span class="badge text-bg-success-subtle text-success">Approved</span></td>
-                        </tr>
-                        <tr>
-                            <td><span class="avatar-sm">DP</span>Dara Phen</td>
-                            <td>Toul Kork Branch</td>
-                            <td><span class="status-dot late"></span>Check In</td>
-                            <td>09:15 AM</td>
-                            <td><span class="badge text-bg-danger-subtle text-danger">Late</span></td>
-                        </tr>
-                        <tr>
-                            <td><span class="avatar-sm">CN</span>Chan Nita</td>
-                            <td>Phnom Penh HQ</td>
-                            <td><span class="status-dot out"></span>Check Out</td>
-                            <td>06:04 PM</td>
-                            <td><span class="badge text-bg-success-subtle text-success">Approved</span></td>
-                        </tr>
-                        <tr>
-                            <td><span class="avatar-sm">VR</span>Vanna Ry</td>
-                            <td>Siem Reap Branch</td>
-                            <td><span class="status-dot in"></span>Check In</td>
-                            <td>08:47 AM</td>
-                            <td><span class="badge text-bg-warning-subtle text-warning">Rejected</span></td>
-                        </tr>
-                    </tbody>
-                </table>
+<!-- GridStack Container -->
+<div class="grid-stack">
+
+    <!-- KPI 1: Total Staff -->
+    <div class="grid-stack-item" id="widget-total-staff" gs-x="0" gs-y="0" gs-w="3" gs-h="2" gs-no-resize="true">
+        <div class="grid-stack-item-content">
+            <div class="kpi-card">
+                <div class="kpi-icon brand"><i class="bi bi-people"></i></div>
+                <div>
+                    <div class="kpi-value">@totalStaff</div>
+                    <div class="kpi-label">Total Staff</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Branch breakdown -->
-    <div class="col-lg-4">
-        <div class="panel">
-            <div class="panel-title">Branches Today</div>
-
-            <div class="branch-row">
-                <span>Phnom Penh HQ</span>
-                <span class="text-muted small">14 / 18 in</span>
-            </div>
-            <div class="branch-row">
-                <span>Toul Kork Branch</span>
-                <span class="text-muted small">8 / 10 in</span>
-            </div>
-            <div class="branch-row">
-                <span>Siem Reap Branch</span>
-                <span class="text-muted small">6 / 8 in</span>
-            </div>
-            <div class="branch-row">
-                <span>Sihanoukville Branch</span>
-                <span class="text-muted small">3 / 6 in</span>
+    <!-- KPI 2: Checked In Today -->
+    <div class="grid-stack-item" id="widget-checked-in" gs-x="3" gs-y="0" gs-w="3" gs-h="2" gs-no-resize="true">
+        <div class="grid-stack-item-content">
+            <div class="kpi-card">
+                <div class="kpi-icon accent"><i class="bi bi-check-circle"></i></div>
+                <div>
+                    <div class="kpi-value">@checkedInToday</div>
+                    <div class="kpi-label">Checked In Today</div>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- KPI 3: Late Check-ins -->
+    <div class="grid-stack-item" id="widget-late" gs-x="6" gs-y="0" gs-w="3" gs-h="2" gs-no-resize="true">
+        <div class="grid-stack-item-content">
+            <div class="kpi-card">
+                <div class="kpi-icon warn"><i class="bi bi-exclamation-triangle"></i></div>
+                <div>
+                    <div class="kpi-value">@lateToday</div>
+                    <div class="kpi-label">Late Check-ins</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPI 4: Active Branches -->
+    <div class="grid-stack-item" id="widget-branches" gs-x="9" gs-y="0" gs-w="3" gs-h="2" gs-no-resize="true">
+        <div class="grid-stack-item-content">
+            <div class="kpi-card">
+                <div class="kpi-icon neutral"><i class="bi bi-building"></i></div>
+                <div>
+                    <div class="kpi-value">@totalBranches</div>
+                    <div class="kpi-label">Active Branches</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Widget: Recent Attendance Log -->
+    <div class="grid-stack-item" id="widget-attendance-log" gs-x="0" gs-y="2" gs-w="8" gs-h="6">
+        <div class="grid-stack-item-content">
+            <div class="panel">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="panel-title">Recent Attendance Log (@selectedDate)</div>
+                    <a asp-controller="Attendance" asp-action="Index" class="small text-decoration-none fw-semibold">View All <i class="bi bi-arrow-right"></i></a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-clean mb-0">
+                        <thead>
+                            <tr>
+                                <th>Staff Member</th>
+                                <th>Branch</th>
+                                <th>Activity</th>
+                                <th>Time</th>
+                                <th>Verification</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="avatar-sm">SK</span>Sok Kim</td>
+                                <td>Phnom Penh HQ</td>
+                                <td><span class="status-dot in"></span>Check In</td>
+                                <td>08:02 AM</td>
+                                <td><span class="badge bg-success-subtle text-success border">Approved</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="avatar-sm">DP</span>Dara Phen</td>
+                                <td>Toul Kork</td>
+                                <td><span class="status-dot late"></span>Check In</td>
+                                <td>09:15 AM</td>
+                                <td><span class="badge bg-danger-subtle text-danger border">Late</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="avatar-sm">CN</span>Chan Nita</td>
+                                <td>Phnom Penh HQ</td>
+                                <td><span class="status-dot out"></span>Check Out</td>
+                                <td>06:04 PM</td>
+                                <td><span class="badge bg-success-subtle text-success border">Approved</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Widget 1: Quick Actions -->
+    <div class="grid-stack-item" id="widget-quick-actions" gs-x="8" gs-y="2" gs-w="4" gs-h="3">
+        <div class="grid-stack-item-content">
+            <div class="panel">
+                <div class="panel-title mb-3">Quick Actions</div>
+                <div class="d-flex flex-column gap-2">
+                    <a asp-controller="User" asp-action="AddUser" class="quick-action-btn"><i class="bi bi-person-plus"></i> Add System User</a>
+                    <a asp-controller="Staff" asp-action="Create" class="quick-action-btn"><i class="bi bi-person-badge"></i> Register Staff</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Widget 2: Branch Breakdown -->
+    <div class="grid-stack-item" id="widget-branch-breakdown" gs-x="8" gs-y="5" gs-w="4" gs-h="3">
+        <div class="grid-stack-item-content">
+            <div class="panel">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="panel-title">Branch Status Today</div>
+                    <span class="text-muted small">@attendanceRate% Overall</span>
+                </div>
+                <div class="d-flex flex-column gap-3">
+                    <div>
+                        <div class="d-flex justify-content-between small mb-1 fw-semibold"><span>Phnom Penh HQ</span><span class="text-muted">14/18</span></div>
+                        <div class="progress" style="height: 4px;"><div class="progress-bar bg-dark" style="width: 78%;"></div></div>
+                    </div>
+                    <div>
+                        <div class="d-flex justify-content-between small mb-1 fw-semibold"><span>Toul Kork</span><span class="text-muted">8/10</span></div>
+                        <div class="progress" style="height: 4px;"><div class="progress-bar bg-dark" style="width: 80%;"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
+
+<!-- Include GridStack JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/10.1.2/gridstack-all.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var grid = GridStack.init({
+            float: true,
+            minRow: 2,
+            cellHeight: 80,
+            disableDrag: true,
+            disableResize: true
+        });
+
+        // Load saved custom layout from localStorage if it exists
+        var savedLayout = localStorage.getItem('dashboard-grid-layout');
+        if (savedLayout) {
+            grid.load(JSON.parse(savedLayout));
+        }
+
+        var isEditing = false;
+        var toggleBtn = document.getElementById('toggleEditBtn');
+        var resetBtn = document.getElementById('resetLayoutBtn');
+        var btnText = document.getElementById('editBtnText');
+        var container = document.querySelector('.grid-stack');
+
+        // Toggle Customize / Save Layout
+        toggleBtn.addEventListener('click', function () {
+            isEditing = !isEditing;
+
+            if (isEditing) {
+                grid.enable();
+                container.classList.add('dashboard-editable');
+                btnText.textContent = 'Save Layout';
+                toggleBtn.classList.replace('btn-outline-secondary', 'btn-success');
+                toggleBtn.innerHTML = '<i class="bi bi-check-lg me-1"></i> Save Layout';
+                resetBtn.classList.remove('d-none'); // Show reset button while editing
+            } else {
+                grid.disable();
+                container.classList.remove('dashboard-editable');
+                toggleBtn.classList.replace('btn-success', 'btn-outline-secondary');
+                toggleBtn.innerHTML = '<i class="bi bi-grid-1x2 me-1"></i> Customize Layout';
+                resetBtn.classList.add('d-none'); // Hide reset button
+
+                // Save layout configuration
+                var serializedData = grid.save(false);
+                localStorage.setItem('dashboard-grid-layout', JSON.stringify(serializedData));
+            }
+        });
+
+        // Reset Layout to Default
+        resetBtn.addEventListener('click', function () {
+            localStorage.removeItem('dashboard-grid-layout');
+            location.reload(); // Reloads page to restore default layout mapping
+        });
+    });
+</script>

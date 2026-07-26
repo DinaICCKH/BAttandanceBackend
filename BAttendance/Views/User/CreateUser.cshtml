@@ -1,0 +1,187 @@
+﻿@model BAttendance.Models.UserViewModel
+@{
+    ViewData["Title"] = "Add New User";
+}
+
+<div class="container-fluid py-3">
+    <div style="max-width: 1200px; margin: 0 auto;" class="mb-3">
+        <a asp-action="UserList" class="text-decoration-none text-muted small"><i class="bi bi-arrow-left"></i> Back to User List</a>
+        <h4 class="m-0 mt-2 fw-bold">Create System User</h4>
+    </div>
+
+    <div id="formAlert" class="alert alert-danger py-2 small mb-3" style="max-width: 1200px; margin: 0 auto 1rem auto; display: none;"></div>
+
+    <form id="userForm" asp-action="CreateUser" method="post" novalidate>
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="mode" value="Add" />
+
+        <div class="user-form-grid">
+            <!-- Left Column: Account Details & Links -->
+            <div class="panel-card">
+                <div class="panel-body">
+
+                    <div class="panel-section-title mb-3"><i class="bi bi-person-gear"></i> Account Details</div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Usercode" class="form-label"></label>
+                            <input asp-for="Usercode" class="form-control" placeholder="type code" />
+                            <div class="field-error text-danger small mt-1" data-field="Usercode"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Username" class="form-label"></label>
+                            <input asp-for="Username" class="form-control" placeholder="type name" />
+                            <div class="field-error text-danger small mt-1" data-field="Username"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" type="email" class="form-control" />
+                            <div class="field-error text-danger small mt-1" data-field="Email"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input name="password" type="password" class="form-control" required />
+                        <div class="field-error text-danger small mt-1" data-field="PasswordHash"></div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Role" class="form-label"></label>
+                            <select asp-for="Role" class="form-select">
+                                <option value="Admin">Admin</option>
+                                <option value="Manager">Manager</option>
+                                <option value="Staff">Staff</option>
+                            </select>
+                            <div class="field-error text-danger small mt-1" data-field="Role"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Status" class="form-label"></label>
+                            <select asp-for="Status" class="form-select">
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="IsLicense" class="form-label">Is License</label>
+                            <select asp-for="IsLicense" class="form-select">
+                                <option value="N">No</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="StaffId" class="form-label">Link to Staff Profile</label>
+                            <select asp-for="StaffId" class="form-select" asp-items="ViewBag.StaffList">
+                                <option value="">-- Optional: Link Staff Member --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-top text-end">
+                        <a asp-action="Index" class="btn btn-outline-secondary px-4 btn-sm">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4 ms-2 btn-sm" style="background: var(--brand, #1B2430);" id="submitBtn">Create User</button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Right Column: Security & Attendance Policies (Sticky Panel) -->
+            <div class="user-sticky-side">
+                <div class="panel-card">
+                    <div class="panel-body">
+                        <div class="panel-section-title mb-3"><i class="bi bi-shield-check"></i> Attendance Security Policies</div>
+                        <div class="text-muted small mb-3">Enforce mandatory security checks when this user logs attendance or system entries.</div>
+
+                        <div class="d-flex flex-column gap-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" asp-for="RequireGpsLocation" id="chkGps" />
+                                <label class="form-check-label fw-semibold small" asp-for="RequireGpsLocation">Required GPS Location</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" asp-for="RequireFaceScan" id="chkFaceScan" />
+                                <label class="form-check-label fw-semibold small" asp-for="RequireFaceScan">Required Face Scan</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" asp-for="RequirePublicIp" id="chkPublicIp" />
+                                <label class="form-check-label fw-semibold small" asp-for="RequirePublicIp">Required Public IP</label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var form = document.getElementById('userForm');
+            var alertBox = document.getElementById('formAlert');
+            var submitBtn = document.getElementById('submitBtn');
+
+            function clearErrors() {
+                alertBox.style.display = 'none';
+                alertBox.textContent = '';
+                document.querySelectorAll('.field-error').forEach(function (el) {
+                    el.textContent = '';
+                });
+                document.querySelectorAll('.is-invalid').forEach(function (el) {
+                    el.classList.remove('is-invalid');
+                });
+            }
+
+            function showFieldErrors(errors) {
+                Object.keys(errors).forEach(function (field) {
+                    var errorEl = document.querySelector('.field-error[data-field="' + field + '"]');
+                    var input = form.querySelector('[name="' + field + '"], [name="' + field.replace('Hash', '') + '"]');
+                    if (errorEl) errorEl.textContent = errors[field];
+                    if (input) input.classList.add('is-invalid');
+                });
+            }
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                clearErrors();
+
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Saving...';
+
+                var formData = new FormData(form);
+
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                    .then(function (res) { return res.json(); })
+                    .then(function (data) {
+                        if (data.success) {
+                            window.location.href = '@Url.Action("Index", "User")';
+                        } else {
+                            if (data.errors) {
+                                showFieldErrors(data.errors);
+                            }
+                            alertBox.textContent = data.message || 'Something went wrong. Please check the form and try again.';
+                            alertBox.style.display = 'block';
+                        }
+                    })
+                    .catch(function () {
+                        alertBox.textContent = 'Could not reach the server. Please try again.';
+                        alertBox.style.display = 'block';
+                    })
+                    .finally(function () {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Create User';
+                    });
+            });
+        })();
+    </script>
+}

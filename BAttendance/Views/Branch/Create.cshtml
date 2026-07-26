@@ -7,327 +7,131 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<style>
-    .page-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 1.5rem;
-    }
 
-        .page-head h4 {
-            font-weight: 700;
-            margin: 0;
-            font-size: 1.3rem;
-        }
 
-        .page-head .subtitle {
-            color: var(--text-muted);
-            font-size: 0.88rem;
-            margin-top: 0.15rem;
-        }
-
-    .back-link {
-        color: var(--text-muted);
-        font-size: 0.85rem;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-        margin-bottom: 0.5rem;
-    }
-
-        .back-link:hover {
-            color: var(--brand);
-        }
-
-    /* ---------- Layout: full-width two column ---------- */
-    .branch-form-grid {
-        display: grid;
-        grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-        gap: 1.5rem;
-        align-items: start;
-    }
-
-    @@media (max-width: 991px) {
-        .branch-form-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    .panel-card {
-        background: #fff;
-        border: 1px solid #E9EBF0;
-        border-radius: 12px;
-        box-shadow: 0 1px 2px rgba(16, 24, 40, 0.03);
-    }
-
-        .panel-card .panel-body {
-            padding: 1.75rem;
-        }
-
-    .panel-section-title {
-        font-weight: 600;
-        font-size: 0.82rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: var(--text-muted);
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-        .panel-section-title i {
-            color: var(--brand);
-            font-size: 0.95rem;
-        }
-
-    .form-panel label {
-        font-weight: 500;
-        font-size: 0.86rem;
-        margin-bottom: 0.35rem;
-        color: var(--text-main);
-    }
-
-    .form-control, .form-select {
-        border-color: #DDE2E9;
-        font-size: 0.9rem;
-        padding: 0.6rem 0.8rem;
-        border-radius: 8px;
-    }
-
-        .form-control:focus, .form-select:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 0.2rem rgba(46, 196, 182, 0.15);
-        }
-
-    .field-help {
-        font-size: 0.78rem;
-        color: var(--text-muted);
-        margin-top: 0.3rem;
-    }
-
-    .section-divider {
-        border-top: 1px solid #F0F2F5;
-        margin: 1.6rem 0;
-    }
-
-    .locate-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        font-size: 0.83rem;
-        font-weight: 500;
-        border: 1px solid #DDE2E9;
-        background: #fff;
-        border-radius: 8px;
-        padding: 0.5rem 0.9rem;
-        color: var(--brand);
-        white-space: nowrap;
-    }
-
-        .locate-btn:hover {
-            background: #F5F7FA;
-            border-color: var(--brand);
-        }
-
-        .locate-btn:disabled {
-            opacity: 0.6;
-        }
-
-    /* ---------- Map / radius preview (sticky on the right) ---------- */
-    .map-sticky {
-        position: sticky;
-        top: 1.25rem;
-    }
-
-    #mapPreview {
-        width: 100%;
-        height: 340px;
-        border: none;
-        display: block;
-    }
-
-    .map-frame-wrap {
-        position: relative;
-        border-radius: 12px 12px 0 0;
-        overflow: hidden;
-    }
-
-    .radius-badge {
-        position: absolute;
-        top: 12px;
-        left: 12px;
-        background: rgba(27, 36, 48, 0.85);
-        color: #fff;
-        font-size: 0.78rem;
-        font-weight: 600;
-        padding: 0.35rem 0.7rem;
-        border-radius: 20px;
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
-        backdrop-filter: blur(2px);
-    }
-
-        .radius-badge .dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: var(--accent);
-        }
-
-    .map-empty-state {
-        height: 340px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        color: var(--text-muted);
-        font-size: 0.85rem;
-        background: #F7F8FA;
-        text-align: center;
-        padding: 1.5rem;
-    }
-
-        .map-empty-state i {
-            font-size: 1.8rem;
-            margin-bottom: 0.6rem;
-            color: #C7CDD6;
-        }
-
-    .coords-readout {
-        padding: 0.9rem 1.1rem;
-        border-top: 1px solid #F0F2F5;
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.82rem;
-    }
-
-        .coords-readout .label {
-            color: var(--text-muted);
-        }
-
-        .coords-readout .value {
-            font-weight: 600;
-            font-variant-numeric: tabular-nums;
-        }
-
-    .form-actions {
-        display: flex;
-        gap: 0.6rem;
-        padding-top: 0.25rem;
-    }
-
-    .btn-brand {
-        background: var(--brand);
-        border-color: var(--brand);
-        color: #fff;
-        font-weight: 500;
-        padding: 0.55rem 1.4rem;
-        border-radius: 8px;
-    }
-
-        .btn-brand:hover {
-            background: #24305a;
-            border-color: #24305a;
-            color: #fff;
-        }
-
-    .btn-ghost {
-        border: 1px solid #DDE2E9;
-        color: var(--text-main);
-        background: #fff;
-        border-radius: 8px;
-        padding: 0.55rem 1.2rem;
-    }
-
-        .btn-ghost:hover {
-            background: #F5F7FA;
-        }
-</style>
-<style>
-
-    #mapPreview {
-        width: 100%;
-        height: 340px;
-        background: #f0f0f0;
-    }
-</style>
-
-<a asp-action="Index" class="back-link">
-    <i class="bi bi-arrow-left"></i> Branches
-</a>
-
-<div class="page-head">
-    <div>
-        <h4>Add Branch</h4>
-        <div class="subtitle">Register a new location where staff can check in and out</div>
-    </div>
-</div>
 
 <form asp-action="Create" method="post" novalidate>
     <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" id="validationSummary" style="display:none;"></div>
 
     <div class="branch-form-grid">
         <div class="panel-card">
-            <div class="panel-body">
-                <div class="panel-section-title"><i class="bi bi-building"></i> Branch Details</div>
-                <div class="mb-3">
-                    <label asp-for="BranchName"></label>
-                    <input asp-for="BranchName" class="form-control" />
-                </div>
-                <div class="mb-0">
-                    <label asp-for="Address"></label>
-                    <input asp-for="Address" class="form-control" />
+            <div class="panel-body p-3 p-md-4">
+                
+                <!-- 1. Branch Details -->
+                <div class="panel-section-title mb-2"><i class="bi bi-building"></i> Branch Details</div>
+                <div class="row g-2 mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="BranchName" class="form-label small fw-semibold"></label>
+                        <input asp-for="BranchName" class="form-control form-control-sm" />
+                        <span asp-validation-for="BranchName" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Address" class="form-label small fw-semibold"></label>
+                        <input asp-for="Address" class="form-control form-control-sm" />
+                        <span asp-validation-for="Address" class="text-danger small"></span>
+                    </div>
                 </div>
 
-                <div class="section-divider"></div>
+                <hr class="my-3 text-muted" />
 
+                <!-- 2. Operating Schedule (Compact Grid) -->
+                <div class="panel-section-title mb-2"><i class="bi bi-clock"></i> Weekly Schedule</div>
+                <div class="row g-1 mb-3">
+                    @{
+                        var days = new[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+                    }
+                    @foreach (var day in days)
+                    {
+                        var isProp = "Is" + day;
+                        var openProp = day == "Thursday" ? "OpeningTimeThursda" : "OpeningTime" + day;
+                        var closeProp = day == "Thursday" ? "ClosingTimeThursda" : "ClosingTime" + day;
+
+                        var isChecked = Model.GetType().GetProperty(isProp)?.GetValue(Model)?.ToString() == "Y";
+                        var openValObj = Model.GetType().GetProperty(openProp)?.GetValue(Model);
+                        var closeValObj = Model.GetType().GetProperty(closeProp)?.GetValue(Model);
+
+                        var openVal = openValObj is TimeSpan openSpan ? openSpan.ToString(@"hh\:mm") : "08:00";
+                        var closeVal = closeValObj is TimeSpan closeSpan ? closeSpan.ToString(@"hh\:mm") : "17:00";
+
+                        <div class="col-12 schedule-row py-1 border-bottom border-light">
+                            <div class="row align-items-center g-1">
+                                <div class="col-3 col-md-3">
+                                    <input type="hidden" name="@isProp" value="N" />
+                                    <div class="form-check mb-0">
+                                        <input class="form-check-input form-check-input-sm" type="checkbox" name="@isProp" value="Y" id="@isProp" @(isChecked ? "checked" : "")>
+                                        <label class="form-check-label small fw-semibold" for="@isProp">@day.Substring(0, 3)</label>
+                                    </div>
+                                </div>
+                                <div class="col-4 col-md-4">
+                                    <input type="time" name="@openProp" class="form-control form-control-sm py-0 px-1" value="@openVal" />
+                                </div>
+                                <div class="col-1 text-center text-muted px-0 small">-</div>
+                                <div class="col-4 col-md-4">
+                                    <input type="time" name="@closeProp" class="form-control form-control-sm py-0 px-1" value="@closeVal" />
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <hr class="my-3 text-muted" />
+
+                <!-- 3. Location & Rules Side-by-Side -->
                 <div class="d-flex align-items-center justify-content-between mb-2">
-                    <div class="panel-section-title mb-0"><i class="bi bi-geo-alt"></i> Location</div>
-                    <button type="button" class="locate-btn" id="btnUseLocation">
-                        <i class="bi bi-crosshair"></i> Use My Current Location
+                    <div class="panel-section-title mb-0"><i class="bi bi-geo-alt"></i> Location & Rules</div>
+                    <button type="button" class="locate-btn btn btn-outline-secondary btn-sm py-0 px-2" id="btnUseLocation">
+                        <i class="bi bi-crosshair"></i> Detect
                     </button>
                 </div>
 
-                <div class="row g-3">
+                <div class="row g-2 mb-3">
                     <div class="col-md-6">
-                        <label asp-for="Latitude"></label>
-                        <input asp-for="Latitude" class="form-control" id="latitudeInput" />
+                        <label asp-for="Latitude" class="form-label small fw-semibold"></label>
+                        <input asp-for="Latitude" class="form-control form-control-sm" id="latitudeInput" />
+                        <span asp-validation-for="Latitude" class="text-danger small"></span>
                     </div>
                     <div class="col-md-6">
-                        <label asp-for="Longitude"></label>
-                        <input asp-for="Longitude" class="form-control" id="longitudeInput" />
+                        <label asp-for="Longitude" class="form-label small fw-semibold"></label>
+                        <input asp-for="Longitude" class="form-control form-control-sm" id="longitudeInput" />
+                        <span asp-validation-for="Longitude" class="text-danger small"></span>
                     </div>
                 </div>
 
-                <div class="section-divider"></div>
-
-                <div class="panel-section-title"><i class="bi bi-shield-check"></i> Check-in Rules</div>
-                <div class="row g-3">
+                <div class="row g-2 mb-2">
                     <div class="col-md-6">
-                        <label asp-for="AllowedRadiusMeters"></label>
-                        <input asp-for="AllowedRadiusMeters" type="number" class="form-control" id="radiusInput" />
+                        <label asp-for="AllowedRadiusMeters" class="form-label small fw-semibold"></label>
+                        <input asp-for="AllowedRadiusMeters" type="number" class="form-control form-control-sm" id="radiusInput" />
+                        <span asp-validation-for="AllowedRadiusMeters" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6 d-flex flex-column justify-content-end">
+                        <div class="form-check form-switch mt-2">
+                            <input class="form-check-input" type="checkbox" asp-for="IsIpRestrictionEnabled" id="chkIpRestriction" />
+                            <label class="form-check-label small fw-semibold" asp-for="IsIpRestrictionEnabled">Restrict WiFi IP</label>
+                        </div>
                     </div>
                 </div>
-                <div class="form-actions mt-4">
-                    <button type="submit" class="btn btn-brand">Save Branch</button>
+
+                <!-- Conditional IP Address Input Field -->
+                <div class="mb-3 p-2 bg-light rounded border" id="ipAddressContainer" style="display: none;">
+                    <label asp-for="CompanyPublicIP" class="form-label small fw-semibold"></label>
+                    <input asp-for="CompanyPublicIP" class="form-control form-control-sm" placeholder="e.g. 203.0.113.195" id="companyIpInput" />
+                    <span asp-validation-for="CompanyPublicIP" class="text-danger small"></span>
+                    <div class="form-text text-muted" style="font-size: 0.75rem;">Required public IP for check-in.</div>
+                </div>
+
+                <div class="form-actions mt-3">
+                    <button type="submit" class="btn btn-primary btn-brand w-100 btn-sm py-2">Save Branch Configuration</button>
                 </div>
             </div>
         </div>
 
+        <!-- Sticky Map (Compact Height) -->
         <div class="map-sticky">
-            <div class="panel-card overflow-hidden">
-                <div id="mapPreview"></div>
-                <div class="coords-readout">
-                    <span class="label">Latitude</span>
-                    <span class="value" id="readoutLat">—</span>
-                </div>
-                <div class="coords-readout">
-                    <span class="label">Longitude</span>
-                    <span class="value" id="readoutLng">—</span>
+            <div class="panel-card">
+                <div id="mapPreview" style="height: 220px; background: #eee;"></div>
+                <div class="p-2 small">
+                    <div class="coords-readout mb-1"><span class="label text-muted">Lat:</span><span class="value float-end fw-bold" id="readoutLat">—</span></div>
+                    <div class="coords-readout"><span class="label text-muted">Lng:</span><span class="value float-end fw-bold" id="readoutLng">—</span></div>
                 </div>
             </div>
         </div>
@@ -344,15 +148,19 @@
                 readoutLng = document.getElementById('readoutLng'),
                 btnLocate = document.getElementById('btnUseLocation');
 
-            // 1. Initialize Map centered on Phnom Penh
-            var map = L.map('mapPreview').setView([11.5564, 104.9282], 13);
+            var initialLat = parseFloat(latInput.value) || 11.5564;
+            var initialLng = parseFloat(lngInput.value) || 104.9282;
+
+            var map = L.map('mapPreview').setView([initialLat, initialLng], 13);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap'
             }).addTo(map);
 
-            var marker = L.marker([11.5564, 104.9282], { draggable: true }).addTo(map);
+            var marker = L.marker([initialLat, initialLng], { draggable: true }).addTo(map);
 
-            // 2. Update function
+            readoutLat.textContent = initialLat.toFixed(6);
+            readoutLng.textContent = initialLng.toFixed(6);
+
             function updateFields(lat, lng) {
                 latInput.value = lat.toFixed(6);
                 lngInput.value = lng.toFixed(6);
@@ -362,15 +170,42 @@
                 map.setView([lat, lng], 16);
             }
 
-            // 3. Listeners
             marker.on('dragend', (e) => { var p = e.target.getLatLng(); updateFields(p.lat, p.lng); });
             map.on('click', (e) => { updateFields(e.latlng.lat, e.latlng.lng); });
 
-            btnLocate.addEventListener('click', () => {
-                navigator.geolocation.getCurrentPosition((pos) => {
-                    updateFields(pos.coords.latitude, pos.coords.longitude);
-                }, () => alert("Location access denied."));
+            latInput.addEventListener('change', () => {
+                var lat = parseFloat(latInput.value), lng = parseFloat(lngInput.value);
+                if (!isNaN(lat) && !isNaN(lng)) updateFields(lat, lng);
             });
+            lngInput.addEventListener('change', () => {
+                var lat = parseFloat(latInput.value), lng = parseFloat(lngInput.value);
+                if (!isNaN(lat) && !isNaN(lng)) updateFields(lat, lng);
+            });
+
+            btnLocate.addEventListener('click', () => {
+                if (!navigator.geolocation) { alert("Geolocation not supported."); return; }
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => updateFields(pos.coords.latitude, pos.coords.longitude),
+                    () => alert("Location access denied.")
+                );
+            });
+
+            // Toggle Company Public IP input visibility
+            var chkIpRestriction = document.getElementById('chkIpRestriction');
+            var ipAddressContainer = document.getElementById('ipAddressContainer');
+            var companyIpInput = document.getElementById('companyIpInput');
+
+            function toggleIpContainer() {
+                if (chkIpRestriction.checked) {
+                    ipAddressContainer.style.display = 'block';
+                } else {
+                    ipAddressContainer.style.display = 'none';
+                    companyIpInput.value = '';
+                }
+            }
+
+            toggleIpContainer();
+            chkIpRestriction.addEventListener('change', toggleIpContainer);
         })();
     </script>
 }

@@ -1,7 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BAttendance.Models
 {
+
+    public class SpResult
+    {
+        public int Code { get; set; }
+        public string Message { get; set; }
+    }
+
     public class BranchViewModel
     {
         public Guid Id { get; set; }
@@ -29,46 +37,164 @@ namespace BAttendance.Models
 
         [Required]
         public string Status { get; set; } = "active";
+
+       
+
+        public string IsMonday { get; set; } = "Y";
+        public TimeSpan OpeningTimeMonday { get; set; } = new TimeSpan(8, 0, 0);
+        public TimeSpan ClosingTimeMonday { get; set; } = new TimeSpan(17, 0, 0);
+
+        public string IsTuesday { get; set; } = "Y";
+
+        public TimeSpan OpeningTimeTuesday { get; set; } = new TimeSpan(8, 0, 0);
+        public TimeSpan ClosingTimeTuesday { get; set; } = new TimeSpan(17, 0, 0);
+
+        public string IsWednesday { get; set; } = "Y";
+
+        public TimeSpan OpeningTimeWednesday { get; set; } = new TimeSpan(8, 0, 0);
+        public TimeSpan ClosingTimeWednesday { get; set; } = new TimeSpan(17, 0, 0);
+        public string IsThursday { get; set; } = "Y";
+
+        public TimeSpan OpeningTimeThursda { get; set; } = new TimeSpan(8, 0, 0);
+        public TimeSpan ClosingTimeThursda { get; set; } = new TimeSpan(17, 0, 0);
+        public string IsFriday { get; set; } = "Y";
+        public TimeSpan OpeningTimeFriday { get; set; } = new TimeSpan(8, 0, 0);
+        public TimeSpan ClosingTimeFriday { get; set; } = new TimeSpan(17, 0, 0);
+        public string IsSaturday { get; set; } = "N";
+        public TimeSpan OpeningTimeSaturday { get; set; } = new TimeSpan(8, 0, 0);
+        public TimeSpan ClosingTimeSaturday { get; set; } = new TimeSpan(17, 0, 0);
+        public string IsSunday { get; set; } = "N";
+        public TimeSpan OpeningTimeSunday { get; set; } = new TimeSpan(8, 0, 0);
+        public TimeSpan ClosingTimeSunday { get; set; } = new TimeSpan(17, 0, 0);
+
+        [Display(Name = "Restrict by Company WiFi Public IP")]
+        public bool IsIpRestrictionEnabled { get; set; } = false;
+
+        // Optional: If your database strictly requires "Y" / "N" strings, 
+        // you can expose a helper property for database mapping:
+        public string IsIpRestrictionEnabledDb => IsIpRestrictionEnabled ? "Y" : "N";
+
+        [StringLength(45)]
+        [Display(Name = "Company Public IP Address")]
+        public string? CompanyPublicIP { get; set; }
     }
+
 
     public class StaffViewModel
     {
         public Guid Id { get; set; }
 
-        [Required(ErrorMessage = "Staff Code is required")]
-        [StringLength(20, ErrorMessage = "Staff Code cannot exceed 20 characters")]
-        [Display(Name = "Staff Code")]
-        public string StaffCode { get; set; }
+        // --- Identity ---
+        [Required] public string StaffCode { get; set; }
+        [Required] public string FullName { get; set; }
+        public string? NationalId { get; set; }
 
-        [Required(ErrorMessage = "Full Name is required")]
-        [StringLength(100, ErrorMessage = "Name cannot exceed 100 characters")]
-        [Display(Name = "Full Name")]
-        public string FullName { get; set; }
+        public DateTime? JoinDate { get; set; }
 
-        [EmailAddress(ErrorMessage = "Invalid email format")]
+        // --- Contact ---
+        [EmailAddress] public string Email { get; set; }
+        public string Phone { get; set; }
+
+        // --- Organization ---
+        public string? Department { get; set; }
+        public string? JobTitle { get; set; }
+        public Guid? HomeBranchId { get; set; }
+
+        [Display(Name = "Enable Custom Working Hours for Staff")]
+        public bool IsCustomScheduleEnabled { get; set; } = false;
+
+        // --- Custom Working Hours per Day (Like Branch Setup) ---
+        public string IsMonday { get; set; } = "Y";
+        public TimeSpan OpeningTimeMonday { get; set; } = new TimeSpan(8, 0, 0);
+        public TimeSpan ClosingTimeMonday { get; set; } = new TimeSpan(17, 0, 0);
+
+        public string IsTuesday { get; set; } = "Y";
+        public TimeSpan OpeningTimeTuesday { get; set; } = new TimeSpan(8, 0, 0);
+        public TimeSpan ClosingTimeTuesday { get; set; } = new TimeSpan(17, 0, 0);
+
+        public string IsWednesday { get; set; } = "Y";
+        public TimeSpan OpeningTimeWednesday { get; set; } = new TimeSpan(8, 0, 0);
+        public TimeSpan ClosingTimeWednesday { get; set; } = new TimeSpan(17, 0, 0);
+
+        public string IsThursday { get; set; } = "Y";
+        public TimeSpan OpeningTimeThursday { get; set; } = new TimeSpan(8, 0, 0);
+        public TimeSpan ClosingTimeThursday { get; set; } = new TimeSpan(17, 0, 0);
+
+        public string IsFriday { get; set; } = "Y";
+        public TimeSpan OpeningTimeFriday { get; set; } = new TimeSpan(8, 0, 0);
+        public TimeSpan ClosingTimeFriday { get; set; } = new TimeSpan(17, 0, 0);
+
+        public string IsSaturday { get; set; } = "N";
+        public TimeSpan OpeningTimeSaturday { get; set; } = new TimeSpan(8, 0, 0);
+        public TimeSpan ClosingTimeSaturday { get; set; } = new TimeSpan(17, 0, 0);
+
+        public string IsSunday { get; set; } = "N";
+        public TimeSpan OpeningTimeSunday { get; set; } = new TimeSpan(8, 0, 0);
+        public TimeSpan ClosingTimeSunday { get; set; } = new TimeSpan(17, 0, 0);
+
+        // --- System & Status ---
+        public string Role { get; set; } = "Staff";
+        public string Status { get; set; } = "active";
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? LastLogin { get; set; }
+    }
+
+
+    public class UserViewModel
+    {
+
+
+        [Required]
+        [StringLength(100)]
+        public string Usercode { get; set; }
+
+        [Required]
+        [StringLength(100)]
+        public string Username { get; set; }
+
+        [Required]
+        [EmailAddress]
         [StringLength(100)]
         public string Email { get; set; }
 
+        // We store the hash, never the plain text password
+        [Required]
+        [StringLength(500)]
+        public string PasswordHash { get; set; }
+
+        [Required]
         [StringLength(20)]
-        public string Phone { get; set; }
-
-        // This property handles the file upload in the UI
-        [Display(Name = "Profile Image")]
-        public IFormFile FaceImage { get; set; }
-
-        // Stores the actual binary data for the face recognition model
-        public byte[] FaceEmbedding { get; set; }
-
-        [StringLength(50)]
         public string Role { get; set; }
 
-        [Display(Name = "Home Branch")]
-        public Guid? HomeBranchId { get; set; }
+        public string? StaffId { get; set; }
 
-        [StringLength(20)]
         public string Status { get; set; } = "active";
 
+        public string IsLicense { get; set; } = "N";
+
+
+        public DateTime? LastLoginAt { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        // --- New Security Policies Options (Enabled by default) ---
+        public bool RequireGpsLocation { get; set; } = true;
+        public bool RequireFaceScan { get; set; } = true;
+        public bool RequirePublicIp { get; set; } = true;
+
+
     }
 
+
+    public class LoginResult
+    {
+        public int Code { get; set; }                // 200
+        public string? Message { get; set; }         // "Success Login"
+
+        public int? UserID { get; set; }
+        public string? UserCode { get; set; }
+        public string? UserName { get; set; }
+        public string? Email { get; set; }
+        public string? UserRole { get; set; }
+    }
 }

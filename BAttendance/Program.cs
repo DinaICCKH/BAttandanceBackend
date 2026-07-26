@@ -1,7 +1,31 @@
+﻿using BAttendance.Models;
+using BAttendance.Models; // <-- Your actual DbContext namespace
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add<SessionExpireFilter>();
+});
+
+// ✅ Register DbContext with connection string
+builder.Services.AddDbContext<_DbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Db")));
+//builder.Services.AddDbContext<SAPContext>(options =>
+//options.UseSqlServer(builder.Configuration.GetConnectionString("SAPConnection")));
+
+// ✅ Add Session support
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // session timeout
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+// ✅ Add HttpContextAccessor (recommended)
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
@@ -9,7 +33,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -18,10 +41,14 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// ✅ Enable Session before Authorization
+app.UseSession();
+
 app.UseAuthorization();
 
+// 7. Default route pointing to Login
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Login}/{action=Index}/{id?}");
 
 app.Run();

@@ -1,0 +1,155 @@
+﻿@model IEnumerable<BAttendance.Models.License>
+
+@{
+    ViewData["Title"] = "Generate License";
+}
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<div class="container-fluid py-3">
+    <div style="max-width: 1000px; margin: 0 auto;" class="mb-3">
+        <a asp-controller="Home" asp-action="Index" class="text-decoration-none text-muted small"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
+        <h4 class="m-0 mt-2 fw-bold">System License Generator</h4>
+    </div>
+
+    <div style="max-width: 1000px; margin: 0 auto;">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success py-2 small mb-3">
+                <i class="bi bi-check-circle"></i> @TempData["SuccessMessage"]
+            </div>
+        }
+
+        @if (TempData["GeneratedKeys"] != null)
+        {
+            <div class="alert alert-warning py-3 small mb-3 border-warning">
+                <h6 class="fw-bold text-dark mb-1"><i class="bi bi-key-fill text-warning"></i> Generated Raw Keys (Save these now - they won't be shown again!):</h6>
+                <div class="bg-white p-2 border rounded font-monospace text-break user-select-all" style="font-size: 0.8rem;">
+                    @TempData["GeneratedKeys"]
+                </div>
+            </div>
+        }
+
+        <div asp-validation-summary="All" class="alert alert-danger py-2 small mb-3" style="display: @(ViewData.ModelState.ErrorCount > 0 ? "block" : "none");"></div>
+
+        <div class="panel-card mb-4">
+            <div class="panel-body">
+                <form asp-action="Activate" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="panel-section-title mb-2"><i class="bi bi-building"></i> Target Company Information</div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Company Name</label>
+                            <input type="text" name="companyName" class="form-control form-control-sm" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Company Unique ID (Base)</label>
+                            <input type="text" name="companyUniqueId" class="form-control form-control-sm" placeholder="e.g. COMP-123" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Location / Branch</label>
+                            <input type="text" name="location" class="form-control form-control-sm" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">User Type</label>
+                            <select name="userType" class="form-select form-select-sm">
+                                <option value="User">User</option>
+                                <option value="Admin">Admin</option>
+                                <option value="Super">Super</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <hr class="my-3 text-muted" />
+
+                    <div class="panel-section-title mb-2"><i class="bi bi-gear-wide-connected"></i> Generation Settings</div>
+                    <div class="row g-2 mb-3 align-items-end">
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">Number of Licenses to Generate</label>
+                            <input type="number" name="quantity" class="form-control form-control-sm" value="1" min="1" max="100" required />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">Expiration Date</label>
+                            <input type="date" name="expirationDate" class="form-control form-control-sm" value="@(DateTime.UtcNow.AddYears(1).ToString("yyyy-MM-dd"))" required />
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <button type="submit" class="btn btn-primary btn-brand px-4 btn-sm w-100">
+                                <i class="bi bi-plus-circle"></i> Generate Licenses
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Display Existing Licenses Table -->
+        <div class="panel-card">
+            <div class="panel-body p-0">
+                <div class="p-3 border-bottom bg-light">
+                    <h6 class="m-0 fw-bold"><i class="bi bi-list-check"></i> Existing Generated Licenses</h6>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover mb-0 align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="small text-muted ps-3">Unique ID</th>
+                                <th class="small text-muted">Company</th>
+                                <th class="small text-muted">Location</th>
+                                <th class="small text-muted">User Type</th>
+                                <th class="small text-muted">Status</th>
+                                <th class="small text-muted">Expires</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td class="small fw-semibold ps-3">@item.CompanyUniqueId</td>
+                                        <td class="small">@item.CompanyName</td>
+                                        <td class="small text-muted">@(string.IsNullOrEmpty(item.Location) ? "-" : item.Location)</td>
+                                        <td class="small">
+                                            @if (item.UserType == "Super")
+                                            {
+                                                <span class="badge bg-danger">Super</span>
+                                            }
+                                            else if (item.UserType == "Admin")
+                                            {
+                                                <span class="badge bg-warning text-dark">Admin</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">User</span>
+                                            }
+                                        </td>
+                                        <td class="small">
+                                            @if (item.IsActive && item.ExpirationDate > DateTime.UtcNow)
+                                            {
+                                                <span class="text-success fw-semibold"><i class="bi bi-check-circle"></i> Active</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-danger"><i class="bi bi-x-circle"></i> Expired</span>
+                                            }
+                                        </td>
+                                        <td class="small">@item.ExpirationDate.ToString("yyyy-MM-dd")</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-3 small">No licenses generated yet.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,4 +1,25 @@
-﻿<!DOCTYPE html>
+﻿@using Newtonsoft.Json
+@using System.Text
+@inject _DbContext _context
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
+    var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+    var tokenData = (LoginResult)null;
+    var tokenBase64 = HttpContextAccessor.HttpContext.Session.GetString("UserToken");
+
+    if (!string.IsNullOrEmpty(tokenBase64))
+    {
+        try
+        {
+            var tokenJson = Encoding.UTF8.GetString(Convert.FromBase64String(tokenBase64));
+            tokenData = JsonConvert.DeserializeObject<LoginResult>(tokenJson);
+        }
+        catch { }
+    }
+
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -9,12 +30,66 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+    <!-- Put this in the header or top of your view -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/10.1.2/gridstack.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/10.1.2/gridstack-extra.min.css" />
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/BAttendance.styles.css" asp-append-version="true" />
+    <link href="~/css/customstyle.css" rel="stylesheet" />
 
     <style>
+
+        /* Update these specific selectors in your <style> block */
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--page-bg);
+            color: var(--text-main);
+            height: 100vh;
+            margin: 0;
+            overflow: hidden; /* Prevents whole page scrolling */
+        }
+
+        .app-main {
+            margin-left: var(--sidebar-width);
+            height: 100vh; /* Fixed height */
+            display: flex;
+            flex-direction: column;
+            transition: margin-left 0.18s ease;
+        }
+
+        .app-topbar {
+            flex: 0 0 auto; /* Keeps header at top */
+            background: #fff;
+            border-bottom: 1px solid #E5E9EF;
+            padding: 0.85rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 100;
+        }
+
+        .app-content {
+            flex: 1 1 auto; /* Fills remaining space */
+            overflow-y: auto; /* SCROLLING HAPPENS HERE ONLY */
+            padding: 1.75rem;
+        }
+
+        .app-footer {
+            flex: 0 0 auto; /* Keeps footer at bottom */
+            padding: 1rem 1.75rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            background: #fff;
+            border-top: 1px solid #E5E9EF;
+        }
+
+        .app-main.sidebar-collapsed {
+            margin-left: 0;
+        }
+
         :root {
             --sidebar-bg: #1B2430;
             --sidebar-bg-hover: #262f3d;
@@ -277,6 +352,15 @@
 
             <div class="nav-section-label">Manage</div>
 
+            <!-- license key generate -->
+            <button class="nav-group-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#menuLicense" aria-expanded="false">
+                <i class="bi bi-building icon-lead"></i> <span>License</span> <i class="bi bi-chevron-right chevron"></i>
+            </button>
+            <div class="collapse nav-submenu" id="menuLicense">
+                <a class="nav-link" asp-controller="License" asp-action="Index"><span>Generate License</span></a>
+                <a class="nav-link" asp-controller="License" asp-action="Index"><span>License List</span></a>
+            </div>
+
             <!-- Branch group -->
             <button class="nav-group-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#menuBranch" aria-expanded="false">
                 <i class="bi bi-building icon-lead"></i> <span>Branch</span> <i class="bi bi-chevron-right chevron"></i>
@@ -300,8 +384,8 @@
                 <i class="bi bi-person-badge icon-lead"></i> <span>User</span> <i class="bi bi-chevron-right chevron"></i>
             </button>
             <div class="collapse nav-submenu" id="menuUser">
-                <a class="nav-link" asp-controller="Users" asp-action="Create"><span>Add User</span></a>
-                <a class="nav-link" asp-controller="Users" asp-action="Index"><span>User List</span></a>
+                <a class="nav-link" asp-controller="User" asp-action="CreateUser"><span>Add User</span></a>
+                <a class="nav-link" asp-controller="User" asp-action="UserList"><span>User List</span></a>
             </div>
 
             <!-- Attendance group -->
@@ -332,20 +416,21 @@
 
             <div class="dropdown">
                 <button class="user-menu-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <span class="user-avatar">@(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "U")</span>
-                    <span>@(User.Identity?.Name ?? "Account")</span>
+                    <span class="user-avatar">@(tokenData.UserName?.Substring(0, 1).ToUpper() ?? "U")</span>
+                    <span>@(tokenData.UserName)</span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <li><span class="dropdown-item-text text-muted small">Signed in as @(User.IsInRole("SuperAdmin") ? "Super Admin" : "Branch Manager")</span></li>
+                    <li><span class="dropdown-item-text text-muted small">Signed in as @(tokenData.UserRole)</span></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile"><i class="bi bi-person me-2"></i>Profile</a></li>
                     <li>
-                        <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                        <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline" id="logoutForm">
                             <button type="submit" class="dropdown-item text-danger">
                                 <i class="bi bi-box-arrow-right me-2"></i>Logout
                             </button>
                         </form>
                     </li>
+
                 </ul>
             </div>
         </header>
@@ -362,6 +447,32 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        var logoutForm = document.getElementById('logoutForm');
+        if (logoutForm) {
+            logoutForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Log out?',
+                    text: "You'll need to sign in again to access your account.",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, log out',
+                    cancelButtonText: 'Cancel',
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#8B93A1',
+                    reverseButtons: true
+                }).then(function (result) {
+                            if (result.isConfirmed) {
+                                window.location.href = '@Url.Action("Index", "Login")';
+                            }
+                    // If cancelled, do nothing — stays on the current page
+                });
+            });
+        }
+    </script>
 
     <script>
         (function () {
@@ -426,6 +537,8 @@
             });
         })();
     </script>
+
+
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
