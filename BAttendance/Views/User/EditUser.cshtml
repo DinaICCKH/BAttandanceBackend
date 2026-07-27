@@ -4,122 +4,132 @@
     ViewData["Title"] = "Edit System User";
 }
 
-<div class="container-fluid py-4" style="max-width: 1200px; margin: 0 auto;">
-
-    <!-- Header & Back Link -->
-    <div class="mb-4">
-        <a asp-action="UserList" class="text-decoration-none text-muted small fw-semibold">
-            <i class="bi bi-arrow-left me-1"></i> Back to User List
-        </a>
-        <h4 class="m-0 mt-2 fw-bold text-dark"><i class="bi bi-person-gear text-primary me-2"></i>Edit System User</h4>
-        <p class="text-muted small m-0 mt-1">Update user account credentials, roles, and attendance security policies.</p>
+<div class="container-fluid py-3" style="max-width: 1100px;">
+    <!-- Compact Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <a asp-action="UserList" class="text-decoration-none text-muted small"><i class="bi bi-arrow-left"></i> Back to User List</a>
+            <h4 class="m-0 mt-1 fw-bold fs-5">Edit System User</h4>
+        </div>
     </div>
 
-    <!-- Alert Box for Errors -->
-    <div id="formAlert" class="alert alert-danger py-2 small shadow-sm mb-4" style="display: none;"></div>
+    <div id="formAlert" class="alert alert-danger py-2 small mb-3" style="display: none;"></div>
 
     <form id="userForm" asp-action="CreateUser" method="post" novalidate>
         @Html.AntiForgeryToken()
         <input type="hidden" name="mode" value="Update" />
 
-        <div class="row g-4">
-            <!-- Left Column: Account Credentials -->
+        <div class="row g-3">
+            <!-- Left Column: Account Details (Compact Add-Mode Style) -->
             <div class="col-lg-8">
-                <div class="card shadow-sm border-0 rounded-3">
-                    <div class="card-body p-4">
-                        <h6 class="fw-bold text-dark mb-3 pb-2 border-bottom"><i class="bi bi-info-circle me-2"></i>Account Information</h6>
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-3">
+                        <div class="fw-semibold text-secondary small mb-2 text-uppercase"><i class="bi bi-person-gear me-1"></i> Account Details</div>
 
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label asp-for="Usercode" class="form-label fw-semibold small">Usercode</label>
-                                <input asp-for="Usercode" class="form-control bg-light" readonly />
-                                <div class="form-text small text-muted">Usercode cannot be changed.</div>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="Username" class="form-label fw-semibold small">Username</label>
-                                <input asp-for="Username" class="form-control shadow-sm" required />
-                                <div class="field-error text-danger small mt-1" data-field="Username"></div>
-                            </div>
-                        </div>
-
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label asp-for="Email" class="form-label fw-semibold small">Email Address</label>
-                                <input asp-for="Email" type="email" class="form-control shadow-sm" required />
-                                <div class="field-error text-danger small mt-1" data-field="Email"></div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold small">Password <span class="text-muted fw-normal">(Leave blank to keep existing)</span></label>
-                                <input name="password" type="password" class="form-control shadow-sm" placeholder="••••••••" />
-                            </div>
-                        </div>
-
-                        <div class="row g-3 mb-3">
+                        <div class="row g-2 mb-2">
                             <div class="col-md-4">
-                                <label asp-for="Role" class="form-label fw-semibold small">Role</label>
-                                <select asp-for="Role" class="form-select shadow-sm">
+                                <label asp-for="Usercode" class="form-label small mb-1">User Code</label>
+                                <input asp-for="Usercode" class="form-control form-control-sm bg-light" readonly />
+                                <div class="form-text text-muted" style="font-size: 0.7rem;">Cannot be changed</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Username" class="form-label small mb-1">Username</label>
+                                <input asp-for="Username" class="form-control form-control-sm" required />
+                                <div class="field-error text-danger small mt-0" data-field="Username"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Email" class="form-label small mb-1">Email</label>
+                                <input asp-for="Email" type="email" class="form-control form-control-sm" required />
+                                <div class="field-error text-danger small mt-0" data-field="Email"></div>
+                            </div>
+                        </div>
+
+                        <!-- Password Toggle & Fields Section -->
+                        <div class="row g-2 mb-2 align-items-center bg-light p-2 rounded-2 border">
+                            <div class="col-md-12 d-flex justify-content-between align-items-center">
+                                <span class="small fw-semibold text-dark"><i class="bi bi-shield-lock me-1"></i> Password Configuration</span>
+                                <div class="form-check form-switch m-0">
+                                    <input class="form-check-input" type="checkbox" id="togglePasswordChange" role="switch" />
+                                    <label class="form-check-label small text-muted" for="togglePasswordChange">Change password?</label>
+                                </div>
+                            </div>
+
+                            <div id="passwordSection" class="row g-2 mt-1" style="display: none;">
+                                <div class="col-md-6">
+                                    <label class="form-label small mb-1">New Password</label>
+                                    <input name="password" id="passwordInput" type="password" class="form-control form-control-sm" placeholder="••••••••" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small mb-1">Confirm Password</label>
+                                    <input id="confirmPasswordInput" type="password" class="form-control form-control-sm" placeholder="••••••••" />
+                                    <div id="passwordMatchError" class="text-danger small mt-0" style="display: none; font-size: 0.75rem;">Passwords do not match.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mb-2">
+                            <div class="col-md-4">
+                                <label asp-for="Role" class="form-label small mb-1">Role</label>
+                                <select asp-for="Role" class="form-select form-select-sm">
                                     <option value="Admin">Admin</option>
                                     <option value="Manager">Manager</option>
                                     <option value="Staff">Staff</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label asp-for="Status" class="form-label fw-semibold small">Status</label>
-                                <select asp-for="Status" class="form-select shadow-sm">
+                                <label asp-for="Status" class="form-label small mb-1">Status</label>
+                                <select asp-for="Status" class="form-select form-select-sm">
                                     <option value="active">Active</option>
                                     <option value="inactive">Inactive</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label asp-for="IsLicense" class="form-label fw-semibold small">License Status</label>
-                                <select asp-for="IsLicense" class="form-select shadow-sm">
-                                    <option value="N">No (N)</option>
-                                    <option value="Y">Yes (Y)</option>
+                                <label asp-for="IsLicense" class="form-label small mb-1">Is License</label>
+                                <select asp-for="IsLicense" class="form-select form-select-sm bg-light" disabled>
+                                    <option value="N">No</option>
+                                    <option value="Y">Yes</option>
                                 </select>
+                                <!-- Hidden input to ensure the value is still submitted in the form POST -->
+                                <input type="hidden" asp-for="IsLicense" />
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="StaffId" class="form-label fw-semibold small">Link to Staff ID</label>
-                            <input asp-for="StaffId" class="form-control shadow-sm" placeholder="Optional staff identifier" />
+                        <!-- Hidden Staff Link input keeping data model compliant -->
+                        <div style="display:none">
+                            <input asp-for="StaffId" />
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Column: Security Policies -->
+            <!-- Right Column: Security Policies (Compact Side Card) -->
             <div class="col-lg-4">
-                <div class="card shadow-sm border-0 rounded-3 mb-3">
-                    <div class="card-body p-4">
-                        <h6 class="fw-bold text-dark mb-3 pb-2 border-bottom"><i class="bi bi-shield-lock me-2"></i>Security Policies</h6>
-                        <p class="text-muted small mb-4">Configure mandatory attendance validation flags for this user account.</p>
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body p-3 d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="fw-semibold text-secondary small mb-2 text-uppercase"><i class="bi bi-shield-check me-1"></i> Security Policies</div>
+                            <p class="text-muted small mb-3" style="font-size: 0.75rem;">Enforce mandatory validation rules for this user.</p>
 
-                        <div class="d-flex flex-column gap-3">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" asp-for="RequireGpsLocation" id="chkGps" role="switch" />
-                                <label class="form-check-label fw-semibold small text-dark" asp-for="RequireGpsLocation">Require GPS Location</label>
-                            </div>
-
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" asp-for="RequireFaceScan" id="chkFaceScan" role="switch" />
-                                <label class="form-check-label fw-semibold small text-dark" asp-for="RequireFaceScan">Require Face Scan</label>
-                            </div>
-
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" asp-for="RequirePublicIp" id="chkPublicIp" role="switch" />
-                                <label class="form-check-label fw-semibold small text-dark" asp-for="RequirePublicIp">Require Public IP</label>
+                            <div class="d-flex flex-column gap-2">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" asp-for="RequireGpsLocation" id="chkGps" />
+                                    <label class="form-check-label small" asp-for="RequireGpsLocation">Require GPS Location</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" asp-for="RequireFaceScan" id="chkFaceScan" />
+                                    <label class="form-check-label small" asp-for="RequireFaceScan">Require Face Scan</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" asp-for="RequirePublicIp" id="chkPublicIp" />
+                                    <label class="form-check-label small" asp-for="RequirePublicIp">Require Public IP</label>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Action Buttons Card -->
-                <div class="card shadow-sm border-0 rounded-3">
-                    <div class="card-body p-3 text-end d-flex gap-2 justify-content-end">
-                        <a asp-action="UserList" class="btn btn-outline-secondary btn-sm px-4 shadow-sm">Cancel</a>
-                        <button type="submit" id="submitBtn" class="btn btn-primary btn-sm px-4 shadow-sm" style="background: var(--brand, #1B2430);">
-                            <i class="bi bi-check-lg me-1"></i> Save Changes
-                        </button>
+                        <div class="mt-3 pt-2 border-top text-end">
+                            <a asp-action="UserList" class="btn btn-outline-secondary px-3 btn-sm">Cancel</a>
+                            <button type="submit" class="btn btn-primary px-3 ms-1 btn-sm" style="background: var(--brand, #1B2430);" id="submitBtn">Save</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -133,20 +143,51 @@
             var form = document.getElementById('userForm');
             var alertBox = document.getElementById('formAlert');
             var submitBtn = document.getElementById('submitBtn');
+            var togglePassword = document.getElementById('togglePasswordChange');
+            var passwordSection = document.getElementById('passwordSection');
+            var passwordInput = document.getElementById('passwordInput');
+            var confirmPasswordInput = document.getElementById('confirmPasswordInput');
+            var passwordMatchError = document.getElementById('passwordMatchError');
+
+            togglePassword.addEventListener('change', function () {
+                if (this.checked) {
+                    passwordSection.style.display = 'flex';
+                } else {
+                    passwordSection.style.display = 'none';
+                    passwordInput.value = '';
+                    confirmPasswordInput.value = '';
+                    passwordMatchError.style.display = 'none';
+                }
+            });
 
             function clearErrors() {
                 alertBox.style.display = 'none';
                 alertBox.textContent = '';
+                document.querySelectorAll('.field-error').forEach(function (el) { el.textContent = ''; });
             }
 
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
                 clearErrors();
 
+                if (togglePassword.checked) {
+                    if (passwordInput.value !== confirmPasswordInput.value) {
+                        passwordMatchError.style.display = 'block';
+                        confirmPasswordInput.focus();
+                        return;
+                    } else {
+                        passwordMatchError.style.display = 'none';
+                    }
+                }
+
                 submitBtn.disabled = true;
-                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Saving...';
+                submitBtn.textContent = 'Saving...';
 
                 var formData = new FormData(form);
+
+                if (!togglePassword.checked) {
+                    formData.delete('password');
+                }
 
                 fetch(form.action, {
                     method: 'POST',
@@ -158,19 +199,17 @@
                     if (data.success) {
                         window.location.href = '@Url.Action("UserList", "User")';
                     } else {
-                        alertBox.textContent = data.message || 'Operation failed. Please check your inputs.';
+                        alertBox.textContent = data.message || 'Something went wrong. Please check the form and try again.';
                         alertBox.style.display = 'block';
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
                     }
                 })
                 .catch(function () {
-                    alertBox.textContent = 'Network error occurred. Please try again.';
+                    alertBox.textContent = 'Could not reach the server. Please try again.';
                     alertBox.style.display = 'block';
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 })
                 .finally(function () {
                     submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<i class="bi bi-check-lg me-1"></i> Save Changes';
+                    submitBtn.textContent = 'Save';
                 });
             });
         })();

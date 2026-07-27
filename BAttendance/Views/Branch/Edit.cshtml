@@ -1,7 +1,7 @@
 ﻿@model BAttendance.Models.BranchViewModel
 
 @{
-    ViewData["Title"] = "Add Branch";
+    ViewData["Title"] = "Edit Branch";
 }
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -19,8 +19,11 @@
     </div>
 </div>
 
-<form id="branchForm" asp-action="Create" asp-route-mode="Add" method="post" novalidate>
+<form id="branchForm" asp-action="Create" asp-route-mode="Update" method="post" novalidate>
     @Html.AntiForgeryToken()
+    <!-- Hidden ID field required for editing an existing record -->
+    <input type="hidden" asp-for="Id" />
+
     <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" id="validationSummary" style="display:none;"></div>
 
     <div class="branch-form-grid">
@@ -28,7 +31,7 @@
             <div class="panel-body p-3 p-md-4">
 
                 <!-- 1. Branch Details -->
-                <div class="panel-section-title mb-2"><i class="bi bi-building"></i> Branch Details</div>
+                <div class="panel-section-title mb-2"><i class="bi bi-building"></i> Edit Branch Details</div>
                 <div class="row g-2 mb-3">
                     <div class="col-md-6">
                         <label asp-for="BranchName" class="form-label small fw-semibold"></label>
@@ -67,8 +70,8 @@
                             <div class="row align-items-center g-1">
                                 <div class="col-3 col-md-3">
                                     <div class="form-check mb-0">
-                                        <!-- Hidden fallback input removed; JavaScript will explicitly append Y/N on submit -->
-                                        <input class="form-check-input form-check-input-sm" type="checkbox" name="@isProp" value="Y" id="@isProp" @(isChecked ? "checked" : "")>
+                                        <!-- No hidden fallback needed; JS handles appending Y/N explicitly -->
+                                        <input class="form-check-input form-check-input-sm" type="checkbox" value="Y" id="@isProp" @(isChecked ? "checked" : "")>
                                         <label class="form-check-label small fw-semibold" for="@isProp">@day.Substring(0, 3)</label>
                                     </div>
                                 </div>
@@ -129,8 +132,9 @@
                     <div class="form-text text-muted" style="font-size: 0.75rem;">Required public IP for check-in.</div>
                 </div>
 
-                <div class="form-actions mt-3">
-                    <button type="submit" class="btn btn-primary btn-brand w-100 btn-sm py-2">Save Branch Configuration</button>
+                <div class="form-actions mt-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary btn-brand w-100 btn-sm py-2">Update Branch Changes</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary w-100 btn-sm py-2">Cancel</a>
                 </div>
             </div>
         </div>
@@ -209,7 +213,6 @@
                 ipAddressContainer.style.display = 'block';
             } else {
                 ipAddressContainer.style.display = 'none';
-                companyIpInput.value = '';
             }
         }
 
@@ -238,13 +241,13 @@
 
                 const formData = new FormData(form);
 
-                // Explicitly append "Y" or "N" for all schedule properties so that C# model binding captures it accurately
-                const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+                // Explicitly append "Y" or "N" for all schedule properties so that C# model binding and JSON serialization catch it accurately
+                const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
                 daysOfWeek.forEach(day => {
-                    const propName = "Is" + day;
+                    const propName = 'Is' + day;
                     const checkbox = document.getElementById(propName);
                     if (checkbox) {
-                        formData.set(propName, checkbox.checked ? "Y" : "N");
+                        formData.set(propName, checkbox.checked ? 'Y' : 'N');
                     }
                 });
 
@@ -255,7 +258,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        showToast(data.message || "Branch created successfully!", "success");
+                        showToast(data.message || "Branch updated successfully!", "success");
                         setTimeout(() => {
                             window.location.href = '@Url.Action("Index", "Branch")';
                         }, 1200);
@@ -265,7 +268,7 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showToast('An unexpected error occurred while saving.', "error");
+                    showToast('An unexpected error occurred while saving changes.', "error");
                 });
             });
         }

@@ -82,6 +82,7 @@ namespace BAttendance.Models
 
     public class StaffViewModel
     {
+        public string? Mode { get; set; }
         public Guid Id { get; set; }
 
         // --- Identity ---
@@ -133,6 +134,9 @@ namespace BAttendance.Models
         public TimeSpan ClosingTimeSunday { get; set; } = new TimeSpan(17, 0, 0);
 
         // --- System & Status ---
+        [Display(Name = "Linked User Account")]
+        public string? UserId { get; set; } // Added field to link Staff profile to an application User ID
+
         public string Role { get; set; } = "Staff";
         public string Status { get; set; } = "active";
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
