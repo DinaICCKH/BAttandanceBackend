@@ -5,18 +5,23 @@ public class SessionExpireFilter : IActionFilter
 {
     public void OnActionExecuting(ActionExecutingContext context)
     {
-        var controller = context.RouteData.Values["Controller"]?.ToString();
+        var path = context.HttpContext.Request.Path.Value?.ToLower() ?? string.Empty;
 
-
-        // Allow Login page
-        if (controller == "Login")
+        // 1. Bypass all API routes so they return JSON instead of HTML redirects
+        if (path.StartsWith("/api"))
         {
             return;
         }
 
-        var token = context.HttpContext.Session
-            .GetString("UserToken");
+        var controller = context.RouteData.Values["Controller"]?.ToString();
 
+        // Allow Login page or controller
+        if (controller == "Login" || controller == "App")
+        {
+            return;
+        }
+
+        var token = context.HttpContext.Session.GetString("UserToken");
 
         if (string.IsNullOrEmpty(token))
         {
@@ -28,9 +33,7 @@ public class SessionExpireFilter : IActionFilter
         }
     }
 
-
     public void OnActionExecuted(ActionExecutedContext context)
     {
-
     }
 }

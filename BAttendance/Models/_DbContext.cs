@@ -11,11 +11,14 @@ namespace BAttendance.Models
         public DbSet<License> Licenses { get; set; }
         public DbSet<SpResult> SpResults { get; set; }
 
+        public DbSet<StaffFaceEntity> StaffFaceEntitys { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<BranchViewModel>().HasNoKey();
             modelBuilder.Entity<LoginResult>().HasNoKey();
             modelBuilder.Entity<SpResult>().HasNoKey();
+            modelBuilder.Entity<StaffFaceEntity>().HasNoKey();
             // REMOVED: modelBuilder.Entity<License>().HasNoKey(); -> License has [Key] LicenseId
 
             base.OnModelCreating(modelBuilder);

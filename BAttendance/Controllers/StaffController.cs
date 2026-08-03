@@ -1,5 +1,6 @@
 ﻿using BAttendance.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
@@ -14,7 +15,7 @@ namespace BAttendance.Controllers
         }
 
         // GET: /Staff/Index
-        public async Task<IActionResult> Index(string searchText = "ALL", int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> StaffList(string searchText = "ALL", int pageNumber = 1, int pageSize = 10)
         {
             var staffList = new List<StaffViewModel>();
             int totalCount = 0;
@@ -82,6 +83,7 @@ namespace BAttendance.Controllers
             };
 
             await PopulateUserListBagAsync();
+            await PopulateBranchListBagAsync();
             return View(model);
         }
 
@@ -90,10 +92,17 @@ namespace BAttendance.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(StaffViewModel model)
         {
+            // 1. Automatically generate a new ID if it's empty
+            if (model.Id == Guid.Empty)
+            {
+                model.Id = Guid.NewGuid();
+            }
+
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
                 await PopulateUserListBagAsync();
+                await PopulateBranchListBagAsync();
                 return Json(new { success = false, message = string.Join(" | ", errors) });
             }
 
@@ -106,7 +115,7 @@ namespace BAttendance.Controllers
                     .FromSqlRaw("EXEC dbo.ControllerStaff @MasterType, @TranType, @EntryPrimary, @JsonBody",
                         new SqlParameter("@MasterType", "Staff"),
                         new SqlParameter("@TranType", "Add"),
-                        new SqlParameter("@EntryPrimary", DBNull.Value),
+                        new SqlParameter("@EntryPrimary", model.Id.ToString()), // Pass the generated ID here
                         new SqlParameter("@JsonBody", jsonBody))
                     .AsNoTracking()
                     .ToListAsync();
@@ -129,11 +138,14 @@ namespace BAttendance.Controllers
         }
 
         // GET: /Staff/Edit/{id}
+        [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
+            // Safeguard against default empty GUIDs from bad links/routes
             if (id == Guid.Empty)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = "Invalid or missing Staff ID.";
+                return RedirectToAction(nameof(StaffList));
             }
 
             StaffViewModel model = null;
@@ -164,7 +176,7 @@ namespace BAttendance.Controllers
                         Phone = reader["Phone"]?.ToString() ?? "",
                         Department = reader["Department"]?.ToString(),
                         JobTitle = reader["JobTitle"]?.ToString(),
-                        HomeBranchId = reader["HomeBranchId"] != DBNull.Value ? reader.GetGuid(reader.GetOrdinal("HomeBranchId")) : null,
+                        HomeBranchId = reader["HomeBranchId"] != DBNull.Value ? reader.GetInt32(reader.GetOrdinal("HomeBranchId")) : null,
                         IsCustomScheduleEnabled = reader["IsCustomScheduleEnabled"] != DBNull.Value && reader.GetBoolean(reader.GetOrdinal("IsCustomScheduleEnabled")),
 
                         IsMonday = reader["IsMonday"]?.ToString() ?? "Y",
@@ -204,16 +216,20 @@ namespace BAttendance.Controllers
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = $"Failed to load staff details: {ex.Message}";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(StaffList));
             }
 
             if (model == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = "Staff member not found.";
+                return RedirectToAction(nameof(StaffList));
             }
 
             await PopulateUserListBagAsync();
-            return View(model);
+            await PopulateBranchListBagAsync();
+
+            // Explicitly point to the separate Edit view file we created
+            return View("Edit", model);
         }
 
         // POST: /Staff/Edit/{id}
@@ -230,6 +246,7 @@ namespace BAttendance.Controllers
             {
                 var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
                 await PopulateUserListBagAsync();
+                await PopulateBranchListBagAsync();
                 return Json(new { success = false, message = string.Join(" | ", errors) });
             }
 
@@ -271,32 +288,56 @@ namespace BAttendance.Controllers
             try
             {
                 using var command = _context.Database.GetDbConnection().CreateCommand();
-                command.CommandText = "EXEC dbo.GET_User_List @UserID, @Usercode, @PageNumber, @PageSize";
-                command.Parameters.Add(new SqlParameter("@UserID", DBNull.Value));
-                command.Parameters.Add(new SqlParameter("@Usercode", "ALL"));
-                command.Parameters.Add(new SqlParameter("@PageNumber", 1));
-                command.Parameters.Add(new SqlParameter("@PageSize", 999999)); // Large page size to fetch all records without pagination limits
+                command.CommandText = "EXEC dbo.ICC_GET_AvailableUser_for_Staff";
 
                 await _context.Database.OpenConnectionAsync();
                 using var reader = await command.ExecuteReaderAsync();
 
-                // 1. Read Users List
                 while (await reader.ReadAsync())
                 {
                     userList.Add(new
                     {
-                        Id = reader["Id"]?.ToString(),
-                        UserName = reader["Username"]?.ToString() ?? reader["Email"]?.ToString()
+                        Id = reader["ID"]?.ToString(),
+                        UserName = reader["Username"]?.ToString() ?? reader["UserCode"]?.ToString()
                     });
                 }
             }
             catch (Exception ex)
             {
-                // Log or handle error quietly for dropdown populating
-                System.Diagnostics.Debug.WriteLine($"Failed to load user dropdown list: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Failed to load available user dropdown list: {ex.Message}");
             }
 
             ViewBag.UserList = userList;
+        }
+
+        private async Task PopulateBranchListBagAsync()
+        {
+            var branchList = new List<BranchList>();
+
+            try
+            {
+                using var command = _context.Database.GetDbConnection().CreateCommand();
+                command.CommandText = "EXEC dbo.ICC_GET_Branch_for_Staff";
+
+                await _context.Database.OpenConnectionAsync();
+                using var reader = await command.ExecuteReaderAsync();
+
+                while (await reader.ReadAsync())
+                {
+                    branchList.Add(new BranchList
+                    {
+                        DocEntry = reader["DocEntry"] != DBNull.Value ? Convert.ToInt32(reader["DocEntry"]) : 0,
+                        BranchName = reader["BranchName"]?.ToString() ?? "",
+                        Address = reader["Address"]?.ToString() ?? ""
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to load branch dropdown list: {ex.Message}");
+            }
+
+            ViewBag.Branches = new SelectList(branchList, "DocEntry", "BranchName");
         }
     }
 }

@@ -17,7 +17,6 @@
         }
         catch { }
     }
-
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -38,301 +37,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/BAttendance.styles.css" asp-append-version="true" />
     <link href="~/css/customstyle.css" rel="stylesheet" />
-
-    <style>
-
-        /* Update these specific selectors in your <style> block */
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--page-bg);
-            color: var(--text-main);
-            height: 100vh;
-            margin: 0;
-            overflow: hidden; /* Prevents whole page scrolling */
-        }
-
-        .app-main {
-            margin-left: var(--sidebar-width);
-            height: 100vh; /* Fixed height */
-            display: flex;
-            flex-direction: column;
-            transition: margin-left 0.18s ease;
-        }
-
-        .app-topbar {
-            flex: 0 0 auto; /* Keeps header at top */
-            background: #fff;
-            border-bottom: 1px solid #E5E9EF;
-            padding: 0.85rem 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            z-index: 100;
-        }
-
-        .app-content {
-            flex: 1 1 auto; /* Fills remaining space */
-            overflow-y: auto; /* SCROLLING HAPPENS HERE ONLY */
-            padding: 1.75rem;
-        }
-
-        .app-footer {
-            flex: 0 0 auto; /* Keeps footer at bottom */
-            padding: 1rem 1.75rem;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            background: #fff;
-            border-top: 1px solid #E5E9EF;
-        }
-
-        .app-main.sidebar-collapsed {
-            margin-left: 0;
-        }
-
-        :root {
-            --sidebar-bg: #1B2430;
-            --sidebar-bg-hover: #262f3d;
-            --brand: #2B3A67;
-            --accent: #2EC4B6;
-            --page-bg: #F5F7FA;
-            --text-main: #1F2937;
-            --text-muted: #8B93A1;
-            --sidebar-width: 250px;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--page-bg);
-            color: var(--text-main);
-        }
-
-        /* ---------- Sidebar ---------- */
-        .app-sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            width: var(--sidebar-width);
-            background: var(--sidebar-bg);
-            display: flex;
-            flex-direction: column;
-            z-index: 1040;
-            transition: width 0.18s ease, transform 0.18s ease;
-            overflow-x: hidden;
-        }
-
-            .app-sidebar .brand {
-                display: flex;
-                align-items: center;
-                gap: 0.6rem;
-                padding: 1.25rem 1.25rem 1rem;
-                color: #fff;
-                font-weight: 700;
-                font-size: 1.1rem;
-                text-decoration: none;
-                white-space: nowrap;
-            }
-
-                .app-sidebar .brand .brand-dot {
-                    width: 10px;
-                    height: 10px;
-                    border-radius: 50%;
-                    background: var(--accent);
-                    box-shadow: 0 0 0 3px rgba(46, 196, 182, 0.25);
-                    flex-shrink: 0;
-                }
-
-            .app-sidebar .nav-section-label {
-                color: var(--text-muted);
-                font-size: 0.7rem;
-                text-transform: uppercase;
-                letter-spacing: 0.08em;
-                padding: 1rem 1.25rem 0.4rem;
-                white-space: nowrap;
-            }
-
-            .app-sidebar .nav-link,
-            .app-sidebar .nav-group-toggle {
-                color: #C7CDD6;
-                font-size: 0.92rem;
-                font-weight: 500;
-                padding: 0.6rem 1.25rem;
-                display: flex;
-                align-items: center;
-                gap: 0.7rem;
-                border-left: 3px solid transparent;
-                width: 100%;
-                background: none;
-                border-top: none;
-                border-right: none;
-                border-bottom: none;
-                text-align: left;
-                white-space: nowrap;
-            }
-
-                .app-sidebar .nav-link i,
-                .app-sidebar .nav-group-toggle i.icon-lead {
-                    font-size: 1rem;
-                    width: 18px;
-                    flex-shrink: 0;
-                }
-
-                .app-sidebar .nav-link:hover,
-                .app-sidebar .nav-group-toggle:hover {
-                    background: var(--sidebar-bg-hover);
-                    color: #fff;
-                }
-
-                .app-sidebar .nav-link.active {
-                    background: var(--sidebar-bg-hover);
-                    color: #fff;
-                    border-left-color: var(--accent);
-                }
-
-        .nav-group-toggle .chevron {
-            margin-left: auto;
-            font-size: 0.75rem;
-            transition: transform 0.15s ease;
-        }
-
-        .nav-group-toggle[aria-expanded="true"] .chevron {
-            transform: rotate(90deg);
-        }
-
-        .nav-group-toggle[aria-expanded="true"] {
-            color: #fff;
-        }
-
-        .nav-submenu {
-            display: flex;
-            flex-direction: column;
-        }
-
-            .nav-submenu .nav-link {
-                padding-left: 3rem;
-                font-size: 0.87rem;
-                font-weight: 400;
-            }
-
-        .sidebar-footer {
-            margin-top: auto;
-            padding: 1rem 1.25rem;
-            border-top: 1px solid rgba(255,255,255,0.08);
-            color: var(--text-muted);
-            font-size: 0.75rem;
-            white-space: nowrap;
-        }
-
-        /* ---------- Hidden (fully collapsed) state ---------- */
-        .app-sidebar.collapsed {
-            transform: translateX(-100%);
-        }
-
-        .app-main.sidebar-collapsed {
-            margin-left: 0;
-        }
-
-        /* ---------- Main area ---------- */
-        .app-main {
-            margin-left: var(--sidebar-width);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            transition: margin-left 0.18s ease;
-        }
-
-        .app-topbar {
-            background: #fff;
-            border-bottom: 1px solid #E5E9EF;
-            padding: 0.85rem 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-            .app-topbar .page-title {
-                font-weight: 600;
-                font-size: 1.05rem;
-                margin: 0;
-            }
-
-        .icon-btn {
-            border: none;
-            background: none;
-            font-size: 1.3rem;
-            color: var(--text-main);
-            width: 34px;
-            height: 34px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-        }
-
-            .icon-btn:hover {
-                background: #EEF1F5;
-            }
-
-        .user-menu-btn {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            border: 1px solid #E5E9EF;
-            background: #fff;
-            border-radius: 8px;
-            padding: 0.35rem 0.75rem;
-            font-size: 0.85rem;
-        }
-
-        .user-avatar {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: var(--brand);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .app-content {
-            padding: 1.75rem;
-            flex: 1;
-        }
-
-        .app-footer {
-            padding: 1rem 1.75rem;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-        }
-
-
-
-        .app-sidebar.show {
-            transform: translateX(0);
-            box-shadow: 4px 0 24px rgba(0,0,0,0.25);
-        }
-
-        }
-
-        /* ---------- Overlay backdrop when sidebar is open on mobile ---------- */
-        .sidebar-backdrop {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.35);
-            z-index: 1030;
-        }
-
-            .sidebar-backdrop.show {
-                display: block;
-            }
-
-    
-        </style>
+    <link rel="icon" type="image/png" href="~/Picture/BSoftLogo.PNG" />
 </head>
 <body>
 
@@ -358,7 +63,6 @@
             </button>
             <div class="collapse nav-submenu" id="menuLicense">
                 <a class="nav-link" asp-controller="License" asp-action="Index"><span>Generate License</span></a>
-                <a class="nav-link" asp-controller="License" asp-action="Index"><span>License List</span></a>
             </div>
 
             <!-- Branch group -->
@@ -376,7 +80,7 @@
             </button>
             <div class="collapse nav-submenu" id="menuStaff">
                 <a class="nav-link" asp-controller="Staff" asp-action="Create"><span>Add Staff</span></a>
-                <a class="nav-link" asp-controller="Staff" asp-action="Index"><span>Staff List</span></a>
+                <a class="nav-link" asp-controller="Staff" asp-action="StaffList"><span>Staff List</span></a>
             </div>
 
             <!-- User group -->
@@ -416,11 +120,11 @@
 
             <div class="dropdown">
                 <button class="user-menu-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <span class="user-avatar">@(tokenData.UserName?.Substring(0, 1).ToUpper() ?? "U")</span>
-                    <span>@(tokenData.UserName)</span>
+                    <span class="user-avatar">@(tokenData?.UserName?.Substring(0, 1).ToUpper() ?? "U")</span>
+                    <span>@(tokenData?.UserName)</span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <li><span class="dropdown-item-text text-muted small">Signed in as @(tokenData.UserRole)</span></li>
+                    <li><span class="dropdown-item-text text-muted small">Signed in as @(tokenData?.UserRole)</span></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile"><i class="bi bi-person me-2"></i>Profile</a></li>
                     <li>
@@ -430,7 +134,6 @@
                             </button>
                         </form>
                     </li>
-
                 </ul>
             </div>
         </header>
@@ -465,10 +168,9 @@
                     cancelButtonColor: '#8B93A1',
                     reverseButtons: true
                 }).then(function (result) {
-                            if (result.isConfirmed) {
-                                window.location.href = '@Url.Action("Index", "Login")';
-                            }
-                    // If cancelled, do nothing — stays on the current page
+                    if (result.isConfirmed) {
+                        window.location.href = '@Url.Action("Index", "Login")';
+                    }
                 });
             });
         }
@@ -504,7 +206,6 @@
                 }
             }
 
-            // Restore desktop state on load (mobile always starts closed)
             if (!isMobile() && localStorage.getItem('sidebarCollapsed') === 'true') {
                 sidebar.classList.add('collapsed');
                 main.classList.add('sidebar-collapsed');
@@ -521,7 +222,6 @@
                 backdrop.addEventListener('click', closeSidebar);
             }
 
-            // Auto-expand the submenu that contains the current page, and mark it active
             var currentPath = window.location.pathname.toLowerCase();
             document.querySelectorAll('.nav-submenu .nav-link, .app-sidebar > nav > .nav-link').forEach(function (link) {
                 var href = (link.getAttribute('href') || '').toLowerCase();
@@ -537,8 +237,6 @@
             });
         })();
     </script>
-
-
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

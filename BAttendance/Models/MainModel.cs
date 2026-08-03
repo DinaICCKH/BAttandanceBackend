@@ -86,7 +86,7 @@ namespace BAttendance.Models
         public Guid Id { get; set; }
 
         // --- Identity ---
-        [Required] public string StaffCode { get; set; }
+        public string StaffCode { get; set; }
         [Required] public string FullName { get; set; }
         public string? NationalId { get; set; }
 
@@ -99,7 +99,7 @@ namespace BAttendance.Models
         // --- Organization ---
         public string? Department { get; set; }
         public string? JobTitle { get; set; }
-        public Guid? HomeBranchId { get; set; }
+        public int? HomeBranchId { get; set; }
 
         [Display(Name = "Enable Custom Working Hours for Staff")]
         public bool IsCustomScheduleEnabled { get; set; } = false;
@@ -188,17 +188,69 @@ namespace BAttendance.Models
 
 
     }
-
-
     public class LoginResult
     {
-        public int Code { get; set; }                // 200
-        public string? Message { get; set; }         // "Success Login"
+        public int Code { get; set; }
+        public string? Message { get; set; }
 
         public int? UserID { get; set; }
         public string? UserCode { get; set; }
         public string? UserName { get; set; }
         public string? Email { get; set; }
         public string? UserRole { get; set; }
+
+        public Guid? StaffId { get; set; }
+        public string? StaffCode { get; set; }
+        public string? FullName { get; set; }
+
+        public string? KeyLicense { get; set; }
+
+        public int? LicenseId { get; set; }
+        public string? CompanyName { get; set; }
+        public string? UserType { get; set; }
+
+        public bool? IsActive { get; set; }
+
+        public DateTime? ExpirationDate { get; set; }
+
+        public string? IsLicense { get; set; }   // Y / N
+    }
+    public class AvailableUserViewModel
+    {
+        public Guid Id { get; set; }
+        public string UserCode { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty;
+    }
+
+    public class BranchList
+    {
+        public int DocEntry { get; set; }
+        public string BranchName { get; set; } = string.Empty;
+        public string Address { get; set; } = string.Empty;
+    }
+
+    public class StaffFaceFormRequestModel
+    {
+        public string StaffId { get; set; }
+        public string FaceEmbedding { get; set; }
+        public string? ImageProfileUrl { get; set; }
+        public IFormFile? ProfileImage { get; set; }
+    }
+
+    public class StaffFaceVerifyModel
+    {
+        public string StaffId { get; set; }
+        public string FaceEmbedding { get; set; }
+    }
+
+    public class StaffFaceEntity
+    {
+        public string StaffId { get; set; }
+        public string FaceEmbedding { get; set; }
+        public string? ImageProfileUrl { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime CreatedAt
+        { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }
 }

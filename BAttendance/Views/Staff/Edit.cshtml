@@ -1,0 +1,226 @@
+﻿@model BAttendance.Models.StaffViewModel
+
+@{
+    ViewData["Title"] = "Edit Staff Profile";
+}
+
+<div class="container-fluid py-3">
+    <div style="max-width: 1200px; margin: 0 auto;" class="mb-3">
+        <a asp-action="StaffList" class="text-decoration-none text-muted small"><i class="bi bi-arrow-left"></i> Back to Staff List</a>
+        <h4 class="m-0 mt-2 fw-bold">Edit Staff Profile</h4>
+    </div>
+
+    <form id="staffForm" asp-action="Edit" asp-route-id="@Model.Id" method="post" novalidate>
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="Mode" />
+
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" style="display:none;"></div>
+
+        <div class="branch-form-grid">
+            <!-- Left Column: Personal Information & Organization -->
+            <div class="panel-card">
+                <div class="panel-body">
+
+                    <div class="panel-section-title mb-2"><i class="bi bi-person-badge"></i> Personal Information</div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="FullName" class="form-label small fw-semibold"></label>
+                            <input asp-for="FullName" class="form-control form-control-sm" />
+                            <span asp-validation-for="FullName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="StaffCode" class="form-label small fw-semibold"></label>
+                            <input asp-for="StaffCode" class="form-control form-control-sm" />
+                            <span asp-validation-for="StaffCode" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label small fw-semibold"></label>
+                            <input asp-for="Email" class="form-control form-control-sm" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Phone" class="form-label small fw-semibold"></label>
+                            <input asp-for="Phone" class="form-control form-control-sm" />
+                            <span asp-validation-for="Phone" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="NationalId" class="form-label small fw-semibold">National ID</label>
+                            <input asp-for="NationalId" class="form-control form-control-sm" />
+                            <span asp-validation-for="NationalId" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="JoinDate" class="form-label small fw-semibold"></label>
+                            <input asp-for="JoinDate" type="date" class="form-control form-control-sm" value="@(Model?.JoinDate?.ToString("yyyy-MM-dd"))" />
+                            <span asp-validation-for="JoinDate" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <hr class="my-3 text-muted" />
+
+                    <div class="panel-section-title mb-2"><i class="bi bi-gear"></i> Organization & Role</div>
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <label asp-for="Department" class="form-label small fw-semibold"></label>
+                            <input asp-for="Department" class="form-control form-control-sm" />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="JobTitle" class="form-label small fw-semibold"></label>
+                            <input asp-for="JobTitle" class="form-control form-control-sm" />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Role" class="form-label small fw-semibold"></label>
+                            <select asp-for="Role" class="form-select form-select-sm">
+                                <option value="Staff">Staff</option>
+                                <option value="Manager">Manager</option>
+                                <option value="Admin">Admin</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="HomeBranchId" class="form-label small fw-semibold">Home Branch</label>
+                            <select asp-for="HomeBranchId" class="form-select form-select-sm" asp-items="@(ViewBag.Branches as SelectList)">
+                                <option value="">-- Select Branch --</option>
+                            </select>
+                            <span asp-validation-for="HomeBranchId" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="UserId" class="form-label small fw-semibold">Linked User Account</label>
+                            <select asp-for="UserId" class="form-select form-select-sm" asp-items="@(new SelectList(ViewBag.UserList ?? new List<object>(), "Id", "UserName", Model?.UserId))">
+                                <option value="">-- Select User Login --</option>
+                            </select>
+                            <span asp-validation-for="UserId" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Status" class="form-label small fw-semibold">Status</label>
+                            <select asp-for="Status" class="form-select form-select-sm">
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-top text-end">
+                        <a asp-action="StaffList" class="btn btn-outline-secondary px-4 btn-sm">Cancel</a>
+                        <button type="submit" class="btn btn-primary btn-brand px-4 ms-2 btn-sm">Save Changes</button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Right Column: Working Schedule (Sticky Panel) -->
+            <div class="staff-sticky-side">
+                <div class="panel-card">
+                    <div class="panel-body">
+                        <div class="panel-section-title mb-2"><i class="bi bi-clock"></i> Working Schedule</div>
+                        <div class="text-muted small mb-3">By default, staff follow branch hours unless custom hours are enabled.</div>
+
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" asp-for="IsCustomScheduleEnabled" id="chkCustomSchedule" />
+                                <label class="form-check-label small fw-semibold" asp-for="IsCustomScheduleEnabled">Enable Custom Working Hours</label>
+                            </div>
+                        </div>
+
+                        <div id="customScheduleContainer" style="display: none;">
+                            <hr class="my-2 text-muted" />
+                            <div class="row g-1">
+                                @{
+                                    var days = new[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+                                }
+                                @foreach (var day in days)
+                                {
+                                    var isProp = "Is" + day;
+                                    var openProp = "OpeningTime" + day;
+                                    var closeProp = "ClosingTime" + day;
+
+                                    var isChecked = Model != null && Model.GetType().GetProperty(isProp)?.GetValue(Model)?.ToString() == "Y";
+                                    var openValObj = Model != null ? Model.GetType().GetProperty(openProp)?.GetValue(Model) : null;
+                                    var closeValObj = Model != null ? Model.GetType().GetProperty(closeProp)?.GetValue(Model) : null;
+
+                                    var openVal = openValObj is TimeSpan openSpan ? openSpan.ToString(@"hh\:mm") : "08:00";
+                                    var closeVal = closeValObj is TimeSpan closeSpan ? closeSpan.ToString(@"hh\:mm") : "17:00";
+
+                                    <div class="col-12 schedule-row py-1 border-bottom border-light">
+                                        <div class="row align-items-center g-1">
+                                            <div class="col-4">
+                                                <input type="hidden" name="@isProp" value="N" />
+                                                <div class="form-check mb-0">
+                                                    <input class="form-check-input form-check-input-sm" type="checkbox" name="@isProp" value="Y" id="@isProp" @(isChecked ? "checked" : "")>
+                                                    <label class="form-check-label small fw-semibold" for="@isProp">@day</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <input type="time" name="@openProp" class="form-control form-control-sm py-0 px-1" value="@openVal" />
+                                            </div>
+                                            <div class="col-4">
+                                                <input type="time" name="@closeProp" class="form-control form-control-sm py-0 px-1" value="@closeVal" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="formToast" class="toast align-items-center text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div id="toastMessage" class="toast-body"></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var chkCustomSchedule = document.getElementById('chkCustomSchedule');
+            var customScheduleContainer = document.getElementById('customScheduleContainer');
+
+            function toggleScheduleContainer() {
+                customScheduleContainer.style.display = chkCustomSchedule.checked ? 'block' : 'none';
+            }
+            toggleScheduleContainer();
+            chkCustomSchedule.addEventListener('change', toggleScheduleContainer);
+
+            function showToast(message, type = 'success') {
+                const toastEl = document.getElementById('formToast');
+                const toastBody = document.getElementById('toastMessage');
+                toastBody.textContent = message;
+                toastEl.classList.remove('bg-success', 'bg-danger');
+                toastEl.classList.add(type === 'success' ? 'bg-success' : 'bg-danger');
+                new bootstrap.Toast(toastEl, { delay: 3000 }).show();
+            }
+
+            const form = document.getElementById('staffForm');
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const formData = new FormData(form);
+                    ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].forEach(day => {
+                        const checkbox = document.getElementById("Is" + day);
+                        if (checkbox) formData.set("Is" + day, checkbox.checked ? "Y" : "N");
+                    });
+
+                    fetch(form.action, { method: 'POST', body: formData })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showToast(data.message, "success");
+                            setTimeout(() => { window.location.href = '@Url.Action("StaffList", "Staff")'; }, 1200);
+                        } else {
+                            showToast("Error: " + data.message, "error");
+                        }
+                    }).catch(() => showToast('An unexpected error occurred.', "error"));
+                });
+            }
+        });
+    </script>
+}

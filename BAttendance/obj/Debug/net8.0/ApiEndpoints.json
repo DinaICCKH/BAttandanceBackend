@@ -1,0 +1,186 @@
+[
+  {
+    "ContainingType": "BAttendance.Controllers.AppController",
+    "Method": "CheckIn",
+    "RelativePath": "api/App/checkin",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "BAttendance.Models.AttendanceRequestModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BAttendance.Controllers.AppController",
+    "Method": "CheckOut",
+    "RelativePath": "api/App/checkout",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "BAttendance.Models.AttendanceRequestModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BAttendance.Controllers.AppController",
+    "Method": "Login",
+    "RelativePath": "api/App/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "BAttendance.Models.MobileLoginRequestModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BAttendance.Controllers.AppController",
+    "Method": "RegisterFace",
+    "RelativePath": "api/App/register",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "StaffId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "FaceEmbedding",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ImageProfileUrl",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ProfileImage",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BAttendance.Controllers.AppController",
+    "Method": "SaveFace",
+    "RelativePath": "api/App/RegisterFace",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "StaffId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "FaceEmbedding",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ImageProfileUrl",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ProfileImage",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BAttendance.Controllers.AppController",
+    "Method": "ApproveRemoteRequest",
+    "RelativePath": "api/App/remoterequest/approve/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "model",
+        "Type": "BAttendance.Models.RemoteRequestModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BAttendance.Controllers.AppController",
+    "Method": "RejectRemoteRequest",
+    "RelativePath": "api/App/remoterequest/reject/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "model",
+        "Type": "BAttendance.Models.RemoteRequestModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BAttendance.Controllers.AppController",
+    "Method": "SubmitRemoteRequest",
+    "RelativePath": "api/App/remoterequest/submit",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "BAttendance.Models.RemoteRequestModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BAttendance.Controllers.AppController",
+    "Method": "VerifyFace",
+    "RelativePath": "api/App/VerifyFace",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "BAttendance.Models.StaffFaceVerifyModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

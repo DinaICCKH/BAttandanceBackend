@@ -4,9 +4,6 @@
     ViewData["Title"] = "Generate License";
 }
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <div class="container-fluid py-3">
     <div style="max-width: 1000px; margin: 0 auto;" class="mb-3">
         <a asp-controller="Home" asp-action="Index" class="text-decoration-none text-muted small"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
@@ -21,25 +18,30 @@
             </div>
         }
 
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger py-2 small mb-3">
+                <i class="bi bi-exclamation-triangle"></i> @TempData["ErrorMessage"]
+            </div>
+        }
+
         @if (TempData["GeneratedKeys"] != null)
         {
             <div class="alert alert-warning py-3 small mb-3 border-warning">
                 <h6 class="fw-bold text-dark mb-1"><i class="bi bi-key-fill text-warning"></i> Generated Raw Keys (Save these now - they won't be shown again!):</h6>
-                <div class="bg-white p-2 border rounded font-monospace text-break user-select-all" style="font-size: 0.8rem;">
+                <div class="bg-white p-2 border rounded font-monospace text-break user-select-all" style="font-size: 0.8rem; white-space: pre-wrap;">
                     @TempData["GeneratedKeys"]
                 </div>
             </div>
         }
 
-        <div asp-validation-summary="All" class="alert alert-danger py-2 small mb-3" style="display: @(ViewData.ModelState.ErrorCount > 0 ? "block" : "none");"></div>
-
-        <div class="panel-card mb-4">
-            <div class="panel-body">
-                <form asp-action="Activate" method="post">
+        <div class="panel-card mb-4 shadow-sm border-0 rounded">
+            <div class="panel-body p-4">
+                <form asp-action="Generate" method="post">
                     @Html.AntiForgeryToken()
 
-                    <div class="panel-section-title mb-2"><i class="bi bi-building"></i> Target Company Information</div>
-                    <div class="row g-2 mb-3">
+                    <div class="panel-section-title mb-3 fw-semibold text-primary"><i class="bi bi-building"></i> Target Company Information</div>
+                    <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Company Name</label>
                             <input type="text" name="companyName" class="form-control form-control-sm" required />
@@ -62,10 +64,10 @@
                         </div>
                     </div>
 
-                    <hr class="my-3 text-muted" />
+                    <hr class="my-4 text-muted" />
 
-                    <div class="panel-section-title mb-2"><i class="bi bi-gear-wide-connected"></i> Generation Settings</div>
-                    <div class="row g-2 mb-3 align-items-end">
+                    <div class="panel-section-title mb-3 fw-semibold text-primary"><i class="bi bi-gear-wide-connected"></i> Generation Settings</div>
+                    <div class="row g-3 align-items-end">
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold">Number of Licenses to Generate</label>
                             <input type="number" name="quantity" class="form-control form-control-sm" value="1" min="1" max="100" required />
@@ -74,9 +76,9 @@
                             <label class="form-label small fw-semibold">Expiration Date</label>
                             <input type="date" name="expirationDate" class="form-control form-control-sm" value="@(DateTime.UtcNow.AddYears(1).ToString("yyyy-MM-dd"))" required />
                         </div>
-                        <div class="col-md-4 text-end">
-                            <button type="submit" class="btn btn-primary btn-brand px-4 btn-sm w-100">
-                                <i class="bi bi-plus-circle"></i> Generate Licenses
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary btn-brand px-4 btn-sm w-100 py-2 shadow-sm">
+                                <i class="bi bi-plus-circle me-1"></i> Generate Licenses
                             </button>
                         </div>
                     </div>
@@ -85,21 +87,23 @@
         </div>
 
         <!-- Display Existing Licenses Table -->
-        <div class="panel-card">
+        <div class="panel-card shadow-sm border-0 rounded">
             <div class="panel-body p-0">
-                <div class="p-3 border-bottom bg-light">
-                    <h6 class="m-0 fw-bold"><i class="bi bi-list-check"></i> Existing Generated Licenses</h6>
+                <div class="p-3 border-bottom bg-light d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 fw-bold"><i class="bi bi-list-check me-1"></i> Existing Generated Licenses</h6>
+                    <span class="badge bg-secondary">Total: @(Model?.Count() ?? 0)</span>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-sm table-hover mb-0 align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th class="small text-muted ps-3">Unique ID</th>
-                                <th class="small text-muted">Company</th>
-                                <th class="small text-muted">Location</th>
-                                <th class="small text-muted">User Type</th>
-                                <th class="small text-muted">Status</th>
-                                <th class="small text-muted">Expires</th>
+                                <th class="small text-muted ps-3 py-2">Unique ID</th>
+                                <th class="small text-muted py-2">Company</th>
+                                <th class="small text-muted py-2">Location</th>
+                                <th class="small text-muted py-2">User Type</th>
+                                <th class="small text-muted py-2">Status</th>
+                                <th class="small text-muted py-2">Expires</th>
+                                <th class="small text-muted text-end pe-3 py-2">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -108,10 +112,10 @@
                                 foreach (var item in Model)
                                 {
                                     <tr>
-                                        <td class="small fw-semibold ps-3">@item.CompanyUniqueId</td>
-                                        <td class="small">@item.CompanyName</td>
-                                        <td class="small text-muted">@(string.IsNullOrEmpty(item.Location) ? "-" : item.Location)</td>
-                                        <td class="small">
+                                        <td class="small fw-semibold ps-3 py-2">@item.CompanyUniqueId</td>
+                                        <td class="small py-2">@item.CompanyName</td>
+                                        <td class="small text-muted py-2">@(string.IsNullOrEmpty(item.Location) ? "-" : item.Location)</td>
+                                        <td class="small py-2">
                                             @if (item.UserType == "Super")
                                             {
                                                 <span class="badge bg-danger">Super</span>
@@ -125,7 +129,7 @@
                                                 <span class="badge bg-secondary">User</span>
                                             }
                                         </td>
-                                        <td class="small">
+                                        <td class="small py-2">
                                             @if (item.IsActive && item.ExpirationDate > DateTime.UtcNow)
                                             {
                                                 <span class="text-success fw-semibold"><i class="bi bi-check-circle"></i> Active</span>
@@ -135,14 +139,37 @@
                                                 <span class="text-danger"><i class="bi bi-x-circle"></i> Expired</span>
                                             }
                                         </td>
-                                        <td class="small">@item.ExpirationDate.ToString("yyyy-MM-dd")</td>
+                                        <td class="small py-2">@item.ExpirationDate.ToString("yyyy-MM-dd")</td>
+                                        <td class="small text-end pe-3 py-2">
+                                            <!-- Edit Button triggers modal -->
+                                            <button type="button" class="btn btn-outline-primary btn-sm py-0 px-1 me-1" title="Edit License"
+                                                    data-bs-toggle="modal" data-bs-target="#editModal"
+                                                    data-id="@item.LicenseId"
+                                                    data-company="@item.CompanyName"
+                                                    data-uniqueid="@item.CompanyUniqueId"
+                                                    data-location="@item.Location"
+                                                    data-usertype="@item.UserType"
+                                                    data-isactive="@item.IsActive.ToString().ToLower()"
+                                                    data-expiration="@item.ExpirationDate.ToString("yyyy-MM-dd")">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+
+                                            <!-- Delete Form -->
+                                            <form asp-action="Delete" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this license?');">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="licenseId" value="@item.LicenseId" />
+                                                <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-1" title="Delete License">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
                                     </tr>
                                 }
                             }
                             else
                             {
                                 <tr>
-                                    <td colspan="6" class="text-center text-muted py-3 small">No licenses generated yet.</td>
+                                    <td colspan="7" class="text-center text-muted py-4 small">No licenses generated yet.</td>
                                 </tr>
                             }
                         </tbody>
@@ -150,6 +177,77 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
+
+<!-- Edit License Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="Update" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="editLicenseId" name="licenseId" />
+
+                <div class="modal-header">
+                    <h5 class="modal-title fs-6 fw-bold" id="editModalLabel"><i class="bi bi-pencil-square"></i> Edit License Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body small">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Company Name</label>
+                        <input type="text" id="editCompanyName" name="companyName" class="form-control form-control-sm" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Company Unique ID</label>
+                        <input type="text" id="editCompanyUniqueId" name="companyUniqueId" class="form-control form-control-sm" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Location / Branch</label>
+                        <input type="text" id="editLocation" name="location" class="form-control form-control-sm" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">User Type</label>
+                        <select id="editUserType" name="userType" class="form-select form-select-sm">
+                            <option value="User">User</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Super">Super</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Status</label>
+                        <select id="editIsActive" name="isActive" class="form-select form-select-sm">
+                            <option value="true">Active</option>
+                            <option value="false">Inactive / Expired</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Expiration Date</label>
+                        <input type="date" id="editExpirationDate" name="expirationDate" class="form-control form-control-sm" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-sm px-4">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const editModal = document.getElementById('editModal');
+        editModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+
+            // Extract data attributes
+            document.getElementById('editLicenseId').value = button.getAttribute('data-id');
+            document.getElementById('editCompanyName').value = button.getAttribute('data-company');
+            document.getElementById('editCompanyUniqueId').value = button.getAttribute('data-uniqueid');
+            document.getElementById('editLocation').value = button.getAttribute('data-location') || '';
+            document.getElementById('editUserType').value = button.getAttribute('data-usertype');
+            document.getElementById('editIsActive').value = button.getAttribute('data-isactive');
+            document.getElementById('editExpirationDate').value = button.getAttribute('data-expiration');
+        });
+    </script>
+}
