@@ -214,6 +214,8 @@ namespace BAttendance.Models
         public DateTime? ExpirationDate { get; set; }
 
         public string? IsLicense { get; set; }   // Y / N
+
+        public string? ImageProfileUrl { get; set; }
     }
     public class AvailableUserViewModel
     {

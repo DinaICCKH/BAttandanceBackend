@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BAttendance")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+067b6419af77218ad15d9da1643c78ca40af1080")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+055b8c7243627b6f233365b4c7a7e2aea378591f")]
 [assembly: System.Reflection.AssemblyProductAttribute("BAttendance")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BAttendance")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
