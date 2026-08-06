@@ -43,6 +43,27 @@
   },
   {
     "ContainingType": "BAttendance.Controllers.AppController",
+    "Method": "ConfigurationSetting",
+    "RelativePath": "api/App/ConfigurationSetting",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "branch",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "currentStaff",
+        "Type": "System.Guid",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BAttendance.Controllers.AppController",
     "Method": "Login",
     "RelativePath": "api/App/login",
     "HttpMethod": "POST",

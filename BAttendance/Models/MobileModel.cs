@@ -89,4 +89,14 @@ namespace BAttendance.Models
         public bool? RequirePublicIp { get; set; }
     }
 
+    [Keyless]
+    public class ConfigurationSettingResult
+    {
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
+        public int? AllowedRadiusMeters { get; set; }
+        public string? CompanyPublicIP { get; set; }
+        public string? FaceEmbedding { get; set; } // Or byte[] if your FaceEmbedding column is stored as binary/varbinary in the database
+    }
+
 }

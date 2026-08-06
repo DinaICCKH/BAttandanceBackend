@@ -13,6 +13,7 @@ namespace BAttendance.Models
 
         public DbSet<StaffFaceEntity> StaffFaceEntitys { get; set; }
         public DbSet<StaffEnableSettingResult> StaffEnableSettingResults { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<BranchViewModel>().HasNoKey();
@@ -20,6 +21,7 @@ namespace BAttendance.Models
             modelBuilder.Entity<SpResult>().HasNoKey();
             modelBuilder.Entity<StaffFaceEntity>().HasNoKey();
             modelBuilder.Entity<StaffEnableSettingResult>().HasNoKey();
+            modelBuilder.Entity<ConfigurationSettingResult>().HasNoKey();
             // REMOVED: modelBuilder.Entity<License>().HasNoKey(); -> License has [Key] LicenseId
 
             base.OnModelCreating(modelBuilder);

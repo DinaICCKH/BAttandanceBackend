@@ -61,3 +61,4 @@ wwwroot\lib\jquery\dist\jquery.min.map
 wwwroot\lib\jquery\LICENSE.txt
 wwwroot\Picture\BSoftLogo.PNG
 wwwroot\Picture\EMP-001_879c2409d957474892f94bb12c84f2d9_MySign.png
+wwwroot\Picture\N0932_0dc25837a59c46d8965af41c735e4381_CAP8454500729370922158.jpg

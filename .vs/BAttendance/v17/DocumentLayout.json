@@ -7,16 +7,12 @@
       "RelativeMoniker": "D:0:0:{3F0EB1B3-55E3-43D7-AB09-82717C797CEA}|BAttendance\\BAttendance.csproj|solutionrelative:battendance\\controllers\\appcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{3F0EB1B3-55E3-43D7-AB09-82717C797CEA}|BAttendance\\BAttendance.csproj|d:\\flutter\\project\\attendane\\battendance\\battendance\\controllers\\logincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3F0EB1B3-55E3-43D7-AB09-82717C797CEA}|BAttendance\\BAttendance.csproj|solutionrelative:battendance\\controllers\\logincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{3F0EB1B3-55E3-43D7-AB09-82717C797CEA}|BAttendance\\BAttendance.csproj|d:\\flutter\\project\\attendane\\battendance\\battendance\\models\\_dbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3F0EB1B3-55E3-43D7-AB09-82717C797CEA}|BAttendance\\BAttendance.csproj|solutionrelative:battendance\\models\\_dbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{3F0EB1B3-55E3-43D7-AB09-82717C797CEA}|BAttendance\\BAttendance.csproj|d:\\flutter\\project\\attendane\\battendance\\battendance\\models\\mobilemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{3F0EB1B3-55E3-43D7-AB09-82717C797CEA}|BAttendance\\BAttendance.csproj|solutionrelative:battendance\\models\\mobilemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3F0EB1B3-55E3-43D7-AB09-82717C797CEA}|BAttendance\\BAttendance.csproj|d:\\flutter\\project\\attendane\\battendance\\battendance\\models\\_dbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3F0EB1B3-55E3-43D7-AB09-82717C797CEA}|BAttendance\\BAttendance.csproj|solutionrelative:battendance\\models\\_dbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{3F0EB1B3-55E3-43D7-AB09-82717C797CEA}|BAttendance\\BAttendance.csproj|d:\\flutter\\project\\attendane\\battendance\\battendance\\controllers\\staffcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -34,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 9,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Bookmark",
@@ -58,13 +54,26 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
+              "Title": "AppController.cs",
+              "DocumentMoniker": "D:\\Flutter\\Project\\Attendane\\BAttendance\\BAttendance\\Controllers\\AppController.cs",
+              "RelativeDocumentMoniker": "BAttendance\\Controllers\\AppController.cs",
+              "ToolTip": "D:\\Flutter\\Project\\Attendane\\BAttendance\\BAttendance\\Controllers\\AppController.cs",
+              "RelativeToolTip": "BAttendance\\Controllers\\AppController.cs",
+              "ViewState": "AgIAAKgBAAAAAAAAAAAowLcBAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-03T10:38:44.65Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "_DbContext.cs",
               "DocumentMoniker": "D:\\Flutter\\Project\\Attendane\\BAttendance\\BAttendance\\Models\\_DbContext.cs",
               "RelativeDocumentMoniker": "BAttendance\\Models\\_DbContext.cs",
               "ToolTip": "D:\\Flutter\\Project\\Attendane\\BAttendance\\BAttendance\\Models\\_DbContext.cs",
               "RelativeToolTip": "BAttendance\\Models\\_DbContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAIAAAAAAAAAA==",
+              "ViewState": "AgIAAAoAAAAAAAAAAAA5wBsAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-08-06T03:01:12.644Z",
               "EditorCaption": ""
@@ -77,14 +86,14 @@
               "RelativeDocumentMoniker": "BAttendance\\Models\\MobileModel.cs",
               "ToolTip": "D:\\Flutter\\Project\\Attendane\\BAttendance\\BAttendance\\Models\\MobileModel.cs",
               "RelativeToolTip": "BAttendance\\Models\\MobileModel.cs",
-              "ViewState": "AgIAAEYAAAAAAAAAAAA8wFMAAAAVAAAAAAAAAA==",
+              "ViewState": "AgIAAFYAAAAAAAAAAAAqwF8AAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-08-06T02:51:32.944Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
               "Title": "StaffController.cs",
               "DocumentMoniker": "D:\\Flutter\\Project\\Attendane\\BAttendance\\BAttendance\\Controllers\\StaffController.cs",
               "RelativeDocumentMoniker": "BAttendance\\Controllers\\StaffController.cs",
@@ -92,12 +101,11 @@
               "RelativeToolTip": "BAttendance\\Controllers\\StaffController.cs",
               "ViewState": "AgIAACsBAAAAAAAAAAAewEwBAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-04T12:50:13.877Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-08-04T12:50:13.877Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 4,
               "Title": "MainModel.cs",
               "DocumentMoniker": "D:\\Flutter\\Project\\Attendane\\BAttendance\\BAttendance\\Models\\MainModel.cs",
               "RelativeDocumentMoniker": "BAttendance\\Models\\MainModel.cs",
@@ -106,32 +114,6 @@
               "ViewState": "AgIAAMkAAAAAAAAAAAA9wOYAAAAuAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-08-04T04:38:31.423Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "AppController.cs",
-              "DocumentMoniker": "D:\\Flutter\\Project\\Attendane\\BAttendance\\BAttendance\\Controllers\\AppController.cs",
-              "RelativeDocumentMoniker": "BAttendance\\Controllers\\AppController.cs",
-              "ToolTip": "D:\\Flutter\\Project\\Attendane\\BAttendance\\BAttendance\\Controllers\\AppController.cs",
-              "RelativeToolTip": "BAttendance\\Controllers\\AppController.cs",
-              "ViewState": "AgIAAFQBAAAAAAAAAAAwwI0BAAA3AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-03T10:38:44.65Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "LoginController.cs",
-              "DocumentMoniker": "D:\\Flutter\\Project\\Attendane\\BAttendance\\BAttendance\\Controllers\\LoginController.cs",
-              "RelativeDocumentMoniker": "BAttendance\\Controllers\\LoginController.cs",
-              "ToolTip": "D:\\Flutter\\Project\\Attendane\\BAttendance\\BAttendance\\Controllers\\LoginController.cs",
-              "RelativeToolTip": "BAttendance\\Controllers\\LoginController.cs",
-              "ViewState": "AgIAACUAAAAAAAAAAAAqwEMAAAAIAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-03T10:38:34.033Z",
-              "EditorCaption": ""
             }
           ]
         }

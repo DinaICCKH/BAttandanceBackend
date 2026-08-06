@@ -410,5 +410,33 @@ namespace BAttendance.Controllers
                 return StatusCode(500, new { message = "Internal server error", error = ex.Message });
             }
         }
+
+        [HttpPost("ConfigurationSetting")]
+        public async Task<IActionResult> ConfigurationSetting([FromQuery] int branch, [FromQuery] Guid currentStaff)
+        {
+            try
+            {
+                var settings = await _context.Set<ConfigurationSettingResult>()
+                    .FromSqlRaw("EXEC dbo.GET_ConfigurationSetting @Branch, @CurrentStaff",
+                        new Microsoft.Data.SqlClient.SqlParameter("@Branch", branch),
+                        new Microsoft.Data.SqlClient.SqlParameter("@CurrentStaff", currentStaff))
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                var result = settings.FirstOrDefault();
+
+                if (result == null)
+                {
+                    return NotFound(new { message = "No configuration found." });
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed configuration: {ex.Message}");
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
+        }
     }
 }
