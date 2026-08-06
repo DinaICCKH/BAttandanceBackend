@@ -216,6 +216,8 @@ namespace BAttendance.Models
         public string? IsLicense { get; set; }   // Y / N
 
         public string? ImageProfileUrl { get; set; }
+
+        public int? HomeBranchId { get; set; }
     }
     public class AvailableUserViewModel
     {

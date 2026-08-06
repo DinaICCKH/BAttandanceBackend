@@ -288,7 +288,7 @@ namespace BAttendance.Controllers
             try
             {
                 using var command = _context.Database.GetDbConnection().CreateCommand();
-                command.CommandText = "EXEC dbo.ICC_GET_AvailableUser_for_Staff";
+                command.CommandText = "EXEC dbo.GET_AvailableUser_for_Staff";
 
                 await _context.Database.OpenConnectionAsync();
                 using var reader = await command.ExecuteReaderAsync();
@@ -318,7 +318,7 @@ namespace BAttendance.Controllers
             try
             {
                 using var command = _context.Database.GetDbConnection().CreateCommand();
-                command.CommandText = "EXEC dbo.ICC_GET_Branch_for_Staff";
+                command.CommandText = "EXEC dbo.GET_Branch_for_Staff";
 
                 await _context.Database.OpenConnectionAsync();
                 using var reader = await command.ExecuteReaderAsync();
