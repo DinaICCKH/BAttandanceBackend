@@ -1,5 +1,6 @@
 ﻿using BAttendance.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -334,6 +335,79 @@ namespace BAttendance.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new SpResult { Code = 500, Message = $"An error occurred: {ex.Message}" });
+            }
+        }
+
+
+        [HttpPost("BranchList")]
+        public async Task<IActionResult> BranchList()
+        {
+            var branchList = new List<BranchList>();
+
+            try
+            {
+                using var command = _context.Database.GetDbConnection().CreateCommand();
+                command.CommandText = "EXEC dbo.ICC_GET_Branch_for_Staff";
+
+                // Ensure connection is open
+                if (_context.Database.GetDbConnection().State != System.Data.ConnectionState.Open)
+                {
+                    await _context.Database.OpenConnectionAsync();
+                }
+
+                using var reader = await command.ExecuteReaderAsync();
+
+                while (await reader.ReadAsync())
+                {
+                    branchList.Add(new BranchList
+                    {
+                        DocEntry = reader["DocEntry"] != DBNull.Value ? Convert.ToInt32(reader["DocEntry"]) : 0,
+                        BranchName = reader["BranchName"]?.ToString() ?? "",
+                        Address = reader["Address"]?.ToString() ?? ""
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to load branch dropdown list: {ex.Message}");
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
+            finally
+            {
+                // Always good practice to close the connection when done, 
+                // especially when using raw ADO.NET commands alongside EF Core context
+                await _context.Database.CloseConnectionAsync();
+            }
+
+            return Ok(branchList);
+        }
+
+
+        [HttpPost("StaffEnableSetting")]
+        public async Task<IActionResult> GetStaffEnableSetting([FromQuery] int branch, [FromQuery] Guid currentStaff)
+        {
+            try
+            {
+                var settings = await _context.Set<StaffEnableSettingResult>()
+                    .FromSqlRaw("EXEC dbo.GET_StaffEnableSetting @Branch, @CurrentStaff",
+                        new Microsoft.Data.SqlClient.SqlParameter("@Branch", branch),
+                        new Microsoft.Data.SqlClient.SqlParameter("@CurrentStaff", currentStaff))
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                var result = settings.FirstOrDefault();
+
+                if (result == null)
+                {
+                    return NotFound(new { message = "No settings found for this branch and staff." });
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to load staff enable setting: {ex.Message}");
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
             }
         }
     }

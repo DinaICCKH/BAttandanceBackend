@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace BAttendance.Models
 {
@@ -75,6 +76,17 @@ namespace BAttendance.Models
 
         [StringLength(500)]
         public string? AdminRemarks { get; set; }
+    }
+
+    [Keyless]
+    public class StaffEnableSettingResult
+    {
+        public string? IsWorkingDay { get; set; }
+        public TimeSpan? TimeOpen { get; set; }
+        public TimeSpan? TimeClose { get; set; }
+        public bool? RequireGpsLocation { get; set; }
+        public bool? RequireFaceScan { get; set; }
+        public bool? RequirePublicIp { get; set; }
     }
 
 }

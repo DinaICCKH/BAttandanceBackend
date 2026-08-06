@@ -310,6 +310,7 @@ namespace BAttendance.Controllers
             ViewBag.UserList = userList;
         }
 
+        // Get branch Listing
         private async Task PopulateBranchListBagAsync()
         {
             var branchList = new List<BranchList>();

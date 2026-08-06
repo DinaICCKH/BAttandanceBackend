@@ -1,6 +1,16 @@
 [
   {
     "ContainingType": "BAttendance.Controllers.AppController",
+    "Method": "BranchList",
+    "RelativePath": "api/App/BranchList",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BAttendance.Controllers.AppController",
     "Method": "CheckIn",
     "RelativePath": "api/App/checkin",
     "HttpMethod": "POST",
@@ -163,6 +173,27 @@
         "Name": "model",
         "Type": "BAttendance.Models.RemoteRequestModel",
         "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BAttendance.Controllers.AppController",
+    "Method": "GetStaffEnableSetting",
+    "RelativePath": "api/App/StaffEnableSetting",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "branch",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "currentStaff",
+        "Type": "System.Guid",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
