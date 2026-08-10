@@ -10,9 +10,11 @@ namespace BAttendance.Models
         public DbSet<LoginResult> LoginResults { get; set; }
         public DbSet<License> Licenses { get; set; }
         public DbSet<SpResult> SpResults { get; set; }
-
         public DbSet<StaffFaceEntity> StaffFaceEntitys { get; set; }
         public DbSet<StaffEnableSettingResult> StaffEnableSettingResults { get; set; }
+
+        // --- ADDED THIS ---
+        public DbSet<StaffAttendanceStatusModel> StaffAttendanceStatusModels { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -22,7 +24,9 @@ namespace BAttendance.Models
             modelBuilder.Entity<StaffFaceEntity>().HasNoKey();
             modelBuilder.Entity<StaffEnableSettingResult>().HasNoKey();
             modelBuilder.Entity<ConfigurationSettingResult>().HasNoKey();
-            // REMOVED: modelBuilder.Entity<License>().HasNoKey(); -> License has [Key] LicenseId
+
+            // --- ADDED THIS ---
+            modelBuilder.Entity<StaffAttendanceStatusModel>().HasNoKey();
 
             base.OnModelCreating(modelBuilder);
         }

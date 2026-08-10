@@ -13,39 +13,86 @@ namespace BAttendance.Models
     public class AttendanceRequestModel
     {
         [Required]
+        [StringLength(100)]
         public string StaffId { get; set; } = string.Empty;
 
         public Guid? BranchId { get; set; }
 
         public DateTime? AttendanceDate { get; set; }
 
+        // --- Check-In Properties ---
         public DateTime? CheckInTime { get; set; }
 
-        public DateTime? CheckOutTime { get; set; }
-
         [StringLength(30)]
-        public string? Status { get; set; }
+        public string? CheckInStatus { get; set; }
+
+        public bool? CheckInIsLate { get; set; }
+
+        [StringLength(500)]
+        public string? CheckInLateRemark { get; set; }
 
         public double? CheckInLatitude { get; set; }
 
         public double? CheckInLongitude { get; set; }
 
-        public decimal? DistanceMeters { get; set; }
+        public decimal? CheckInDistanceMeters { get; set; }
 
-        public bool? IsLocationValid { get; set; }
+        public bool? CheckInIsLocationValid { get; set; }
 
-        public bool? IsFaceVerified { get; set; }
+        [StringLength(500)]
+        public string? CheckInLocationInvalidReason { get; set; }
 
-        public double? FaceSimilarityScore { get; set; }
+        public bool? CheckInIsFaceVerified { get; set; }
+
+        public double? CheckInFaceSimilarityScore { get; set; }
 
         [StringLength(45)]
         public string? CheckInIPAddress { get; set; }
 
-        [StringLength(255)]
-        public string? DeviceModel { get; set; }
+        public bool? CheckInIsIPValid { get; set; }
 
         [StringLength(500)]
-        public string? Remarks { get; set; }
+        public string? CheckInIPInvalidReason { get; set; }
+
+        [StringLength(255)]
+        public string? CheckInDeviceModel { get; set; }
+
+        // --- Check-Out Properties ---
+        public DateTime? CheckOutTime { get; set; }
+
+        [StringLength(30)]
+        public string? CheckOutStatus { get; set; }
+
+        public bool? CheckOutIsEarly { get; set; }
+
+        [StringLength(10)]
+        public string? CheckOutLateRemark { get; set; }
+
+        public double? CheckOutLatitude { get; set; }
+
+        public double? CheckOutLongitude { get; set; }
+
+        public decimal? CheckOutDistanceMeters { get; set; }
+
+        public bool? CheckOutIsLocationValid { get; set; }
+
+        [StringLength(500)]
+        public string? CheckOutLocationInvalidReason { get; set; }
+
+        public bool? CheckOutIsFaceVerified { get; set; }
+
+        public double? CheckOutFaceSimilarityScore { get; set; }
+
+        [StringLength(45)]
+        public string? CheckOutIPAddress { get; set; }
+
+        public bool? CheckOutIsIPValid { get; set; }
+
+        [StringLength(500)]
+        public string? CheckOutIPInvalidReason { get; set; }
+
+        [StringLength(255)]
+        public string? CheckOutDeviceModel { get; set; }
     }
 
 
@@ -97,6 +144,31 @@ namespace BAttendance.Models
         public int? AllowedRadiusMeters { get; set; }
         public string? CompanyPublicIP { get; set; }
         public string? FaceEmbedding { get; set; } // Or byte[] if your FaceEmbedding column is stored as binary/varbinary in the database
+    }
+
+
+    public class StaffAttendanceStatusModel
+    {
+        public Guid Id { get; set; }
+        public string StaffId { get; set; } = string.Empty;
+        public Guid? BranchId { get; set; }
+        public DateTime AttendanceDate { get; set; }
+        public DateTime? CheckInTime { get; set; }
+        public string CheckInStatus { get; set; } = string.Empty;
+        public bool? CheckInIsLate { get; set; }
+        public string? CheckInLateRemark { get; set; }
+        public double? CheckInLatitude { get; set; }
+        public double? CheckInLongitude { get; set; }
+        public decimal? CheckInDistanceMeters { get; set; }
+        public bool CheckInIsLocationValid { get; set; }
+        public string? CheckInLocationInvalidReason { get; set; }
+        public bool CheckInIsFaceVerified { get; set; }
+        public double? CheckInFaceSimilarityScore { get; set; }
+        public string? CheckInIPAddress { get; set; }
+        public bool? CheckInIsIPValid { get; set; }
+        public string? CheckInIPInvalidReason { get; set; }
+        public string? CheckInDeviceModel { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 
 }

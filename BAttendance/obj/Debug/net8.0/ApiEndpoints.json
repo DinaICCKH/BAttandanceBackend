@@ -27,6 +27,22 @@
   },
   {
     "ContainingType": "BAttendance.Controllers.AppController",
+    "Method": "GetCheckInStatus",
+    "RelativePath": "api/App/CheckInStatus",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "staffId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BAttendance.Controllers.AppController",
     "Method": "CheckOut",
     "RelativePath": "api/App/checkout",
     "HttpMethod": "POST",

@@ -347,7 +347,7 @@ namespace BAttendance.Controllers
             try
             {
                 using var command = _context.Database.GetDbConnection().CreateCommand();
-                command.CommandText = "EXEC dbo.ICC_GET_Branch_for_Staff";
+                command.CommandText = "EXEC dbo.GET_Branch_for_Staff";
 
                 // Ensure connection is open
                 if (_context.Database.GetDbConnection().State != System.Data.ConnectionState.Open)
@@ -435,6 +435,26 @@ namespace BAttendance.Controllers
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Failed configuration: {ex.Message}");
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
+        }
+
+        [HttpPost("CheckInStatus")]
+        public async Task<IActionResult> GetCheckInStatus([FromQuery] string staffId)
+        {
+            try
+            {
+                var statusList = await _context.Set<StaffAttendanceStatusModel>()
+                    .FromSqlRaw("EXEC dbo.GET_Checkin_status @StaffId",
+                        new Microsoft.Data.SqlClient.SqlParameter("@StaffId", string.IsNullOrEmpty(staffId) ? DBNull.Value : staffId))
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                return Ok(statusList);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to load check-in status: {ex.Message}");
                 return StatusCode(500, new { message = "Internal server error", error = ex.Message });
             }
         }
