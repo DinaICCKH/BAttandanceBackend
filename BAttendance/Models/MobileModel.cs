@@ -16,7 +16,7 @@ namespace BAttendance.Models
         [StringLength(100)]
         public string StaffId { get; set; } = string.Empty;
 
-        public Guid? BranchId { get; set; }
+        public string? BranchId { get; set; }
 
         public DateTime? AttendanceDate { get; set; }
 
@@ -151,7 +151,7 @@ namespace BAttendance.Models
     {
         public Guid Id { get; set; }
         public string StaffId { get; set; } = string.Empty;
-        public Guid? BranchId { get; set; }
+        public string? BranchId { get; set; }
         public DateTime AttendanceDate { get; set; }
         public DateTime? CheckInTime { get; set; }
         public string CheckInStatus { get; set; } = string.Empty;
