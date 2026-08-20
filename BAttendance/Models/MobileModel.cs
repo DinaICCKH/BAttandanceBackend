@@ -152,6 +152,8 @@ namespace BAttendance.Models
         public Guid Id { get; set; }
         public string StaffId { get; set; } = string.Empty;
         public string? BranchId { get; set; }
+        public string? BranchName { get; set; }
+        public string? Address { get; set; }
         public DateTime AttendanceDate { get; set; }
         public DateTime? CheckInTime { get; set; }
         public string CheckInStatus { get; set; } = string.Empty;
